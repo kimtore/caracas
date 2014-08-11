@@ -14,7 +14,7 @@ public class MainActivity extends Activity {
     	Log.i("caracas", "Caracas main activity started");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-    	Log.i("caracas", "Attempting to start PiService...");
+    	Log.i("caracas", "Attempting to start PiService....");
     	Intent service = new Intent(this, PiService.class);
         startService(service);
     }
