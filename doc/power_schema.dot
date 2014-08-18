@@ -1,0 +1,29 @@
+digraph power {
+    battery         [label="Car battery"];
+    power_board     [label="Power switchboard PCB"];
+    ssd             [label="SSD disk"];
+    raspberry_pi    [label="Raspberry Pi"];
+    usb_hub         [label="USB hub"];
+    amplifier       [label="Audio amplifier"];
+    speakers        [label="Car speakers"];
+    dab_radio       [label="DAB radio"];
+    phone           [label="Android phone"];
+
+    battery -> power_board [label="+12V power"];
+    battery -> power_board [label="+12V ignition"];
+
+    power_board -> ssd [label="SATA power"];
+    power_board -> raspberry_pi [label="GPIO ignition ON/OFF"];
+    power_board -> usb_hub [label="+5V power"];
+
+    raspberry_pi -> usb_hub [label="USB"];
+    raspberry_pi -> amplifier [label="Line-out audio"];
+
+    usb_hub -> ssd [label="USB"];
+    usb_hub -> dab_radio [label="USB"];
+    usb_hub -> phone [label="USB"];
+
+    battery -> amplifier [label="+12V power"];
+
+    amplifier -> speakers;
+}
