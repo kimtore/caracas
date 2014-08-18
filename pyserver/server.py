@@ -1,53 +1,98 @@
-
 #
-#   Raspberry PI ZMQ server notifying Caracas with device state
-#   Uses REQ and REP socket from and to tcp://*:5555
+# Raspberry PI ZMQ server telling ignition power state
 #
 
 import zmq
+import threading
+import logging
+import RPi.GPIO as GPIO
 
-context = zmq.Context()
-
-def get_power_status():
-    return { 'net': 1, 'ignition': 1 }
-
-class Server:
-    def setup_rep_socket(self):
-        self.rep = context.socket(zmq.REP)
-        self.rep.bind("tcp://*:5555")
-
-    def setup_req_socket(self):
-        self.req = context.socket(zmq.REQ)
-        self.req.connect("tcp://raspberrypi:5555")
-
-    def get_next_message(self):
-        return self.rep.recv()
-
-    def send_reply(self, msg):
-        return self.rep.send_string(msg)
-
-    def dispatch(self, msg):
-        if msg == 'get_power_status':
-            ps = get_power_status()
-            code = 0
-            if ps['net']:
-                code |= 0b1
-            if ps['ignition']:
-                code |= 0b10
-            return "%d" % code
-        return None
+class GPIOReader:
+    PIN_IGNITION = 12
 
     def __init__(self):
-        self.setup_rep_socket()
-        self.setup_req_socket()
+        GPIO.setmode(GPIO.BOARD)
+        GPIO.setup(self.PIN_IGNITION, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
-server = Server()
+    def wait(self):
+        GPIO.wait_for_edge(self.PIN_IGNITION, GPIO.BOTH)
 
-while True:
-    msg = server.get_next_message()
-    print "Got message: %s" % msg
-    payload = server.dispatch(msg)
-    if not payload:
-        payload = 'ERROR'
-    server.send_reply(payload)
-    print "Sent back: %s" % payload
+    def get_power_status(self):
+        s = {}
+        s['ignition'] = GPIO.input(self.PIN_IGNITION) == 0
+        return s
+
+    def get_power_status_int(self):
+        status = self.get_power_status()
+        code = 0
+        if status['ignition']:
+            code |= 0b1
+        return code
+
+class Sock:
+    def send(self, msg):
+        logging.info("ZMQ %s send: %s" % (str(self.__class__).split('.')[-1], msg))
+        self.socket.send_string("%s" % msg)
+
+class Publisher(Sock):
+    def __init__(self, context):
+        self.socket = context.socket(zmq.PUB)
+        self.socket.bind("tcp://*:5550")
+
+class Replier(Sock):
+    def __init__(self, context):
+        self.socket = context.socket(zmq.REP)
+        self.socket.bind("tcp://*:5551")
+
+    def get_message(self):
+        return self.socket.recv()
+
+class Server:
+    def __init__(self, publisher, replier, gpio):
+        self.publisher = publisher
+        self.replier = replier
+        self.gpio = gpio
+        self.shutdown = False
+
+    def emit(self):
+        self.publisher.send(self.gpio.get_power_status_int())
+
+    def gpio_thread(self):
+        logging.info("Start GPIO thread")
+        while not self.shutdown:
+            self.publisher.send(self.gpio.get_power_status_int())
+            self.gpio.wait()
+        logging.info("Shutdown GPIO thread")
+
+    def replier_thread(self):
+        logging.info("Start replier thread")
+        while not self.shutdown:
+            self.replier.get_message()
+            self.replier.send(self.gpio.get_power_status_int())
+        logging.info("Shutdown replier thread")
+
+    def main(self):
+        logging.info("Start main thread")
+        self.threads = [
+                threading.Thread(target=self.gpio_thread),
+                threading.Thread(target=self.replier_thread)
+                ]
+        [t.start() for t in self.threads]
+        logging.info("Shutdown main thread")
+
+if __name__ == '__main__':
+    FORMAT = '%(asctime)-15s %(levelname)s %(message)s'
+    logging.basicConfig(format=FORMAT, level=logging.DEBUG)
+
+    context = zmq.Context()
+    publisher = Publisher(context)
+    replier = Replier(context)
+    gpio = GPIOReader()
+    server = Server(publisher, replier, gpio)
+
+    try:
+        server.main()
+    except KeyboardInterrupt:
+        logging.info("Shutdown")
+        server.shutdown = True
+        [t.exit() for t in server.threads]
