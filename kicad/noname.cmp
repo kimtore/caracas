@@ -1,0 +1,38 @@
+Cmp-Mod V01 Created by CvPcb (2013-jul-07)-stable date = lø. 23. aug. 2014 kl. 02.47 +0200
+
+BeginCmp
+TimeStamp = /53F7DD34;
+Reference = D1;
+ValeurCmp = LED;
+IdModule  = ;
+EndCmp
+
+BeginCmp
+TimeStamp = /53F7DFC4;
+Reference = J1;
+ValeurCmp = MYCONN3;
+IdModule  = ;
+EndCmp
+
+BeginCmp
+TimeStamp = /53F7DC02;
+Reference = R1;
+ValeurCmp = 100;
+IdModule  = ;
+EndCmp
+
+BeginCmp
+TimeStamp = /53F7DC9E;
+Reference = R2;
+ValeurCmp = 1k;
+IdModule  = ;
+EndCmp
+
+BeginCmp
+TimeStamp = /53F7DD14;
+Reference = U1;
+ValeurCmp = PIC12C508A;
+IdModule  = ;
+EndCmp
+
+EndListe
