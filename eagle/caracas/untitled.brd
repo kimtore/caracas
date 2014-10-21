@@ -1368,6 +1368,33 @@ Based on the following sources:
 </package>
 </packages>
 </library>
+<library name="transistor">
+<description>&lt;b&gt;Transistors&lt;/b&gt;&lt;p&gt;
+&lt;author&gt;Created by librarian@cadsoft.de&lt;/author&gt;</description>
+<packages>
+<package name="TO18">
+<description>&lt;b&gt;TO 18&lt;/b&gt;</description>
+<wire x1="0.9289" y1="2.227" x2="2.227" y2="0.9289" width="0.0508" layer="51" curve="-44.7172"/>
+<wire x1="0.9289" y1="-2.227" x2="2.227" y2="-0.9289" width="0.0508" layer="51" curve="44.7172"/>
+<wire x1="-3.937" y1="-0.508" x2="-3.937" y2="0.508" width="0.127" layer="21"/>
+<wire x1="-2.227" y1="-0.9289" x2="0.929" y2="2.2271" width="0.0508" layer="21" curve="-135.281"/>
+<wire x1="-2.227" y1="-0.9289" x2="-0.9289" y2="-2.227" width="0.0508" layer="51" curve="44.7172"/>
+<wire x1="-3.937" y1="-0.508" x2="-2.8765" y2="-0.508" width="0.127" layer="21"/>
+<wire x1="-0.9289" y1="-2.227" x2="0.9289" y2="-2.227" width="0.0508" layer="21" curve="45.2828"/>
+<wire x1="-3.937" y1="0.508" x2="-2.8765" y2="0.508" width="0.127" layer="21"/>
+<wire x1="2.227" y1="-0.9289" x2="2.227" y2="0.9289" width="0.0508" layer="21" curve="45.2828"/>
+<circle x="0" y="0" radius="2.921" width="0.127" layer="21"/>
+<pad name="1" x="-1.27" y="-1.27" drill="0.8128" shape="octagon"/>
+<pad name="2" x="1.27" y="-1.27" drill="0.8128" shape="octagon"/>
+<pad name="3" x="1.27" y="1.27" drill="0.8128" shape="octagon"/>
+<text x="3.175" y="0" size="1.27" layer="25" ratio="10">&gt;NAME</text>
+<text x="3.175" y="-1.905" size="1.27" layer="27" ratio="10">&gt;VALUE</text>
+<text x="-1.905" y="-1.27" size="1.27" layer="51" ratio="10">1</text>
+<text x="0.635" y="-1.27" size="1.27" layer="51" ratio="10">2</text>
+<text x="0" y="0.635" size="1.27" layer="51" ratio="10">3</text>
+</package>
+</packages>
+</library>
 </libraries>
 <attributes>
 </attributes>
@@ -1567,6 +1594,10 @@ design rules under a new name.</description>
 <element name="IC1" library="40xx" package="DIL16" value="4027N" x="57.15" y="35.56"/>
 <element name="U$2" library="caracas" package="CD2109" value="CD2109" x="48.26" y="7.62" rot="R180"/>
 <element name="U$3" library="caracas" package="MKDS3" value="MKDS3" x="12.7" y="7.62"/>
+<element name="R2" library="rcl" package="0207/10" value="10k" x="6.35" y="-3.81"/>
+<element name="R3" library="rcl" package="0207/10" value="86" x="6.35" y="-8.89"/>
+<element name="R4" library="rcl" package="0207/10" value="10k" x="6.35" y="-13.97"/>
+<element name="T1" library="transistor" package="TO18" value="2N2222" x="5.08" y="-24.13"/>
 </elements>
 <signals>
 <signal name="GND">
@@ -1625,12 +1656,16 @@ design rules under a new name.</description>
 <wire x1="36.83" y1="10.16" x2="36.83" y2="11.43" width="0.508" layer="16"/>
 <wire x1="16.51" y1="7.62" x2="15.26" y2="7.64" width="0.508" layer="16"/>
 <wire x1="36.83" y1="10.16" x2="36.695" y2="10.52" width="0.508" layer="16"/>
+<contactref element="R2" pad="1"/>
+<contactref element="R4" pad="1"/>
+<wire x1="1.27" y1="-3.81" x2="15.26" y2="7.64" width="0" layer="19" extent="1-1"/>
+<wire x1="1.27" y1="-13.97" x2="1.27" y2="-3.81" width="0" layer="19" extent="1-1"/>
 </signal>
 <signal name="RPI-OFFSIGNAL">
 <contactref element="CON1" pad="18"/>
-<contactref element="IC1" pad="4"/>
-<wire x1="60.96" y1="26.67" x2="55.88" y2="31.75" width="0.508" layer="16"/>
 <wire x1="77.47" y1="26.67" x2="60.96" y2="26.67" width="0.508" layer="16"/>
+<contactref element="R3" pad="2"/>
+<wire x1="11.43" y1="-8.89" x2="60.96" y2="26.67" width="0" layer="19" extent="16-16"/>
 </signal>
 <signal name="VCC">
 <contactref element="C2" pad="2"/>
@@ -1666,14 +1701,14 @@ design rules under a new name.</description>
 </signal>
 <signal name="+12V_IGN">
 <contactref element="U$3" pad="P$2"/>
-<contactref element="IC1" pad="7"/>
-<wire x1="67.31" y1="27.94" x2="63.5" y2="31.75" width="0.508" layer="16"/>
 <wire x1="78.74" y1="27.94" x2="67.31" y2="27.94" width="0.508" layer="16"/>
 <wire x1="78.74" y1="10.16" x2="78.74" y2="27.94" width="0.508" layer="16"/>
 <wire x1="72.39" y1="10.16" x2="78.74" y2="10.16" width="0.508" layer="16"/>
 <wire x1="69.85" y1="7.62" x2="72.39" y2="10.16" width="0.508" layer="16"/>
 <wire x1="21.59" y1="7.62" x2="69.85" y2="7.62" width="0.508" layer="16"/>
 <wire x1="21.59" y1="7.62" x2="20.34" y2="7.64" width="0.508" layer="16"/>
+<contactref element="R2" pad="2"/>
+<wire x1="11.43" y1="-3.81" x2="20.34" y2="7.64" width="0" layer="19" extent="1-1"/>
 </signal>
 <signal name="+5V">
 <contactref element="U$3" pad="P$3"/>
@@ -1709,6 +1744,24 @@ design rules under a new name.</description>
 <wire x1="81.28" y1="7.62" x2="81.28" y2="30.48" width="0.508" layer="16"/>
 <wire x1="77.47" y1="7.62" x2="81.28" y2="7.62" width="0.508" layer="16"/>
 <wire x1="43.18" y1="10.16" x2="43.045" y2="10.52" width="0.508" layer="16"/>
+</signal>
+<signal name="N$4">
+<contactref element="IC1" pad="4"/>
+<contactref element="T1" pad="1"/>
+<contactref element="R4" pad="2"/>
+<wire x1="11.43" y1="-13.97" x2="55.88" y2="31.75" width="0" layer="19" extent="1-1"/>
+<wire x1="3.81" y1="-25.4" x2="11.43" y2="-13.97" width="0" layer="19" extent="1-1"/>
+</signal>
+<signal name="N$1">
+<contactref element="IC1" pad="7"/>
+</signal>
+<signal name="N$2">
+<contactref element="R3" pad="1"/>
+<contactref element="T1" pad="2"/>
+<wire x1="1.27" y1="-8.89" x2="6.35" y2="-25.4" width="0" layer="19" extent="1-1"/>
+</signal>
+<signal name="+12V">
+<contactref element="T1" pad="3"/>
 </signal>
 </signals>
 </board>
