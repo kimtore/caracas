@@ -46,8 +46,8 @@
      fit-margin-bottom="1"
      units="cm"
      inkscape:zoom="0.5"
-     inkscape:cx="996.29163"
-     inkscape:cy="502.98728"
+     inkscape:cx="1015.3785"
+     inkscape:cy="596.88576"
      inkscape:window-x="1920"
      inkscape:window-y="0"
      inkscape:window-maximized="0"
@@ -167,45 +167,38 @@
      y="810.52502" />
   <path
      sodipodi:type="arc"
-     style="fill:#28ff00;stroke:#000000;stroke-width:0.35433071999999999;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;fill-opacity:1"
+     style="fill:#28ff00;fill-opacity:1;stroke:#000000;stroke-width:0.35433072;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
      id="path3967"
      sodipodi:cx="1875.1638"
      sodipodi:cy="930.20117"
      sodipodi:rx="58.42662"
      sodipodi:ry="58.42662"
      d="m 1933.5904,930.20117 a 58.42662,58.42662 0 1 1 -116.8532,0 58.42662,58.42662 0 1 1 116.8532,0 z"
-     transform="matrix(0.51392816,0,0,0.51392816,452.62329,407.06615)" />
+     transform="matrix(0.51392816,0,0,0.51392816,450.62329,418.06615)" />
   <rect
-     style="fill:#28ff00;stroke:#000000;stroke-width:0.22797487999999999;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;fill-opacity:1"
+     style="fill:#28ff00;fill-opacity:1;stroke:#000000;stroke-width:0.22797488;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
      id="rect3979"
      width="43.000408"
      height="16.425583"
-     x="1392.8826"
-     y="1086.4087" />
+     x="1394.8826"
+     y="1083.4087" />
   <rect
-     style="fill:#ff7000;stroke:#000000;stroke-width:0.34981135000000002;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;fill-opacity:1"
+     style="fill:#ff7000;fill-opacity:1;stroke:#000000;stroke-width:0.34981135;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
      id="rect3983"
      width="443.62692"
      height="233.86299"
-     x="1462.2944"
-     y="867.94891">
+     x="1458.2944"
+     y="866.1795">
     <title
        id="title3987">Samsung S2</title>
   </rect>
   <rect
-     style="fill:#2bff01;fill-opacity:1;stroke:#000000;stroke-width:0.30645019;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
-     id="rect3989"
-     width="333.89856"
-     height="199.94051"
-     x="1570.8208"
-     y="888.19977" />
-  <rect
-     style="fill:#ff7000;stroke:#000000;stroke-width:0.39755752999999999;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;fill-opacity:1"
+     style="fill:#ff7000;fill-opacity:1;stroke:#000000;stroke-width:0.49024224;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
      id="rect3991"
-     width="85.516701"
-     height="60.060848"
-     x="1386.6581"
-     y="958.99567" />
+     width="88.092514"
+     height="88.659439"
+     x="1380.7045"
+     y="945.55072" />
   <path
      sodipodi:type="star"
      style="fill:#28ff00;stroke:#000000;stroke-width:0.35433071999999999;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;fill-opacity:1"
@@ -267,4 +260,11 @@
      x="116"
      y="113.95544"
      transform="translate(0,-1.2064036e-4)" />
+  <rect
+     style="fill:#2bff01;fill-opacity:1;stroke:#000000;stroke-width:0.30645019;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+     id="rect3989"
+     width="333.89856"
+     height="199.94051"
+     x="1513.1586"
+     y="883.14075" />
 </svg>
