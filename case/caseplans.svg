@@ -36,8 +36,8 @@
      guidetolerance="10"
      inkscape:pageopacity="0"
      inkscape:pageshadow="2"
-     inkscape:window-width="1920"
-     inkscape:window-height="1061"
+     inkscape:window-width="1440"
+     inkscape:window-height="878"
      id="namedview28"
      showgrid="false"
      fit-margin-top="1"
@@ -45,10 +45,10 @@
      fit-margin-right="1"
      fit-margin-bottom="1"
      units="cm"
-     inkscape:zoom="0.5"
-     inkscape:cx="1015.3785"
-     inkscape:cy="596.88576"
-     inkscape:window-x="1920"
+     inkscape:zoom="1.4142136"
+     inkscape:cx="1598.656"
+     inkscape:cy="229.68041"
+     inkscape:window-x="0"
      inkscape:window-y="0"
      inkscape:window-maximized="0"
      inkscape:current-layer="svg2"
@@ -174,21 +174,14 @@
      sodipodi:rx="58.42662"
      sodipodi:ry="58.42662"
      d="m 1933.5904,930.20117 a 58.42662,58.42662 0 1 1 -116.8532,0 58.42662,58.42662 0 1 1 116.8532,0 z"
-     transform="matrix(0.51392816,0,0,0.51392816,450.62329,418.06615)" />
+     transform="matrix(0.51392816,0,0,0.51392816,450.62329,435.04908)" />
   <rect
-     style="fill:#28ff00;fill-opacity:1;stroke:#000000;stroke-width:0.22797488;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
-     id="rect3979"
-     width="43.000408"
-     height="16.425583"
-     x="1394.8826"
-     y="1083.4087" />
-  <rect
-     style="fill:#ff7000;fill-opacity:1;stroke:#000000;stroke-width:0.34981135;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+     style="fill:#ff7000;fill-opacity:1;stroke:#000000;stroke-width:0.38106662;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
      id="rect3983"
-     width="443.62692"
-     height="233.86299"
-     x="1458.2944"
-     y="866.1795">
+     width="446.07602"
+     height="275.99713"
+     x="1456.4911"
+     y="840.65063">
     <title
        id="title3987">Samsung S2</title>
   </rect>
@@ -198,7 +191,7 @@
      width="88.092514"
      height="88.659439"
      x="1380.7045"
-     y="945.55072" />
+     y="953.55072" />
   <path
      sodipodi:type="star"
      style="fill:#28ff00;stroke:#000000;stroke-width:0.35433071999999999;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;fill-opacity:1"
@@ -265,6 +258,13 @@
      id="rect3989"
      width="333.89856"
      height="199.94051"
-     x="1513.1586"
+     x="1514.9183"
      y="883.14075" />
+  <rect
+     style="fill:#28ff00;fill-opacity:1;stroke:#000000;stroke-width:0.22797488;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+     id="rect3979"
+     width="43.000408"
+     height="16.425583"
+     x="1394.8826"
+     y="1066.6949" />
 </svg>
