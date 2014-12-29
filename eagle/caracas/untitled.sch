@@ -4515,15 +4515,22 @@ Source: http://www.irf.com/product-info/datasheets/data/irlz44zpbf.pdf</descript
 </net>
 <net name="POWER_STATE" class="0">
 <segment>
-<pinref part="IC1" gate="A" pin="Q"/>
-<wire x1="86.36" y1="45.72" x2="93.98" y2="45.72" width="0.1524" layer="91"/>
-<pinref part="R3" gate="G$1" pin="1"/>
-<label x="88.9" y="50.8" size="1.778" layer="95" rot="R90"/>
-</segment>
-<segment>
 <wire x1="-86.36" y1="38.1" x2="-116.84" y2="38.1" width="0.1524" layer="91"/>
 <label x="-119.38" y="38.1" size="1.778" layer="95" rot="R90"/>
 <pinref part="CON1" gate="A" pin="16"/>
+</segment>
+<segment>
+<wire x1="43.18" y1="48.26" x2="43.18" y2="45.72" width="0.1524" layer="91"/>
+<wire x1="43.18" y1="45.72" x2="43.18" y2="43.18" width="0.1524" layer="91"/>
+<wire x1="43.18" y1="45.72" x2="53.34" y2="45.72" width="0.1524" layer="91"/>
+<junction x="43.18" y="45.72"/>
+<pinref part="IC1" gate="A" pin="S"/>
+<pinref part="R2" gate="G$1" pin="2"/>
+<pinref part="R5" gate="G$1" pin="1"/>
+<wire x1="53.34" y1="45.72" x2="60.96" y2="45.72" width="0.1524" layer="91"/>
+<wire x1="53.34" y1="45.72" x2="53.34" y2="63.5" width="0.1524" layer="91"/>
+<junction x="53.34" y="45.72"/>
+<label x="55.88" y="60.96" size="1.778" layer="95"/>
 </segment>
 </net>
 <net name="+12V_IGN" class="2">
@@ -4614,17 +4621,6 @@ Source: http://www.irf.com/product-info/datasheets/data/irlz44zpbf.pdf</descript
 <junction x="-63.5" y="-25.4"/>
 <pinref part="X4" gate="-1" pin="S"/>
 <pinref part="X4" gate="-2" pin="S"/>
-</segment>
-</net>
-<net name="+3.3V1" class="0">
-<segment>
-<wire x1="43.18" y1="48.26" x2="43.18" y2="45.72" width="0.1524" layer="91"/>
-<wire x1="43.18" y1="45.72" x2="43.18" y2="43.18" width="0.1524" layer="91"/>
-<wire x1="43.18" y1="45.72" x2="60.96" y2="45.72" width="0.1524" layer="91"/>
-<junction x="43.18" y="45.72"/>
-<pinref part="IC1" gate="A" pin="S"/>
-<pinref part="R2" gate="G$1" pin="2"/>
-<pinref part="R5" gate="G$1" pin="1"/>
 </segment>
 </net>
 <net name="N$1" class="0">
@@ -4840,6 +4836,13 @@ Source: http://www.irf.com/product-info/datasheets/data/irlz44zpbf.pdf</descript
 <wire x1="-60.96" y1="40.64" x2="-60.96" y2="48.26" width="0.1524" layer="91"/>
 <pinref part="CON1" gate="A" pin="23"/>
 <wire x1="-60.96" y1="48.26" x2="-71.12" y2="48.26" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$14" class="0">
+<segment>
+<pinref part="IC1" gate="A" pin="Q"/>
+<pinref part="R3" gate="G$1" pin="1"/>
+<wire x1="86.36" y1="45.72" x2="93.98" y2="45.72" width="0.1524" layer="91"/>
 </segment>
 </net>
 </nets>
