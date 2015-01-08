@@ -1,0 +1,36 @@
+Interface behavior and requirements
+===================================
+
+Starting and stopping the car
+-----------------------------
+
+When the ignition key is switched to ACC, the Raspberry PI starts to boot, and
+the Android phone is switched to online mode. Any shutdown timer is disabled.
+
+When the ignition key is switched to OFF, the Android phone is switched to
+offline mode. A shutdown timer starts on the Raspberry PI.
+
+When the shutdown timer reaches zero, the Raspberry PI synchronizes all data
+and sends a kill signal to GPIO pin 11 (HIGH). This cuts off power to the
+Raspberry PI.
+
+
+Buttons
+-------
+
+Wheel left: decrease volume -1
+Wheel right: increase volume +1
+Wheel press: pause
+
+Vol+: increase volume +1
+Vol-: decrease volume -1
+Vol long press: increase volume +1 continuously
+
+Up: next song
+Down: previous song
+Up long press: next album
+Down long press: previous album
+
+Mode: switch between navigation and music
+
+All button presses must trigger visual feedback on the Android phone.
