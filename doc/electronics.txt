@@ -1,1 +1,14 @@
 http://www.electronics-tutorials.ws/transistor/tran_4.html
+
+Voltage dividers:
+
+    5V  -> 3.3V: r1=0.515*r2
+
+    Try: r2 = 100k
+         r1 = 47k
+
+    12V -> 3.3V: r1=2.636*r2
+
+    Try: r2 = 100k
+         r1 = 290k
+
