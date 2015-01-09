@@ -1,0 +1,3 @@
+- CD4027 will not work without a clock, replace it with two NAND ports configured as SR latch
+- Voltage divider to obtain 3.3V will not work reliably, instead drive all parts with 5V from regulator
+- Create a new case schematic using inkscape plugin; makercase.com drawing will not correctly export to DXF
