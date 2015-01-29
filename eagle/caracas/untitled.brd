@@ -1804,9 +1804,12 @@ design rules under a new name.</description>
 <element name="Q1" library="transistor-power" package="TO220BH" value="IRLZ44Z" x="35.56" y="41.91" rot="R90"/>
 <element name="D1" library="diode" package="DO41Z10" value="1N4728" x="41.91" y="13.97" rot="R270"/>
 <element name="IC1" library="40xx" package="DIL14" value="4001N" x="30.48" y="21.59" rot="R90"/>
-<element name="R1" library="rcl" package="0207/10" value="" x="6.35" y="-5.08"/>
+<element name="R1" library="rcl" package="0207/10" value="10k" x="6.35" y="-5.08"/>
 <element name="T1" library="transistor" package="TO92-CBE" value="" x="-5.08" y="-1.27"/>
-<element name="R3" library="rcl" package="0207/10" value="" x="-2.54" y="-10.16"/>
+<element name="R3" library="rcl" package="0207/10" value="260" x="-2.54" y="-10.16"/>
+<element name="R4" library="rcl" package="0207/10" value="10k" x="-2.54" y="-15.24"/>
+<element name="T2" library="transistor" package="TO92-CBE" value="" x="-13.97" y="-11.43"/>
+<element name="R5" library="rcl" package="0207/10" value="1.2k" x="-11.43" y="-20.32"/>
 </elements>
 <signals>
 <signal name="GND" class="1">
@@ -1831,6 +1834,8 @@ design rules under a new name.</description>
 <contactref element="X3" pad="1"/>
 <contactref element="T1" pad="E"/>
 <contactref element="Q1" pad="S"/>
+<contactref element="T2" pad="E"/>
+<wire x1="-2.54" y1="-1.27" x2="-11.43" y2="-11.43" width="0" layer="19" extent="1-1"/>
 <wire x1="8.89" y1="5.08" x2="-2.54" y2="-1.27" width="0" layer="19" extent="1-1"/>
 </signal>
 <signal name="POWER_STATE">
@@ -1855,10 +1860,10 @@ design rules under a new name.</description>
 <contactref element="R2" pad="1"/>
 <wire x1="16.51" y1="34.29" x2="16.51" y2="16.51" width="0.6096" layer="16"/>
 <wire x1="16.51" y1="16.51" x2="26.67" y2="6.35" width="0.6096" layer="16"/>
-<contactref element="IC1" pad="1"/>
 <contactref element="U$2" pad="P$4"/>
-<wire x1="26.67" y1="6.35" x2="34.29" y2="13.97" width="0.6096" layer="16"/>
 <wire x1="16.51" y1="34.29" x2="12.72" y2="38.08" width="0.6096" layer="16"/>
+<contactref element="R5" pad="1"/>
+<wire x1="16.51" y1="16.51" x2="-16.51" y2="-20.32" width="0" layer="19" extent="16-16"/>
 </signal>
 <signal name="+5V" class="2">
 <contactref element="CON1" pad="2"/>
@@ -2057,7 +2062,9 @@ design rules under a new name.</description>
 <wire x1="8.89" y1="31.75" x2="8.89" y2="39.33" width="0.6096" layer="16"/>
 <wire x1="8.89" y1="39.33" x2="12.72" y2="43.16" width="0.6096" layer="16"/>
 <contactref element="R1" pad="1"/>
+<contactref element="R4" pad="1"/>
 <wire x1="1.27" y1="-5.08" x2="19.05" y2="5.08" width="0" layer="19" extent="1-1"/>
+<wire x1="-7.62" y1="-15.24" x2="1.27" y2="-5.08" width="0" layer="19" extent="1-1"/>
 </signal>
 <signal name="N$2">
 <contactref element="R1" pad="2"/>
@@ -2070,6 +2077,18 @@ design rules under a new name.</description>
 <contactref element="T1" pad="B"/>
 <contactref element="R3" pad="1"/>
 <wire x1="-5.08" y1="-1.27" x2="-7.62" y2="-10.16" width="0" layer="19" extent="1-1"/>
+</signal>
+<signal name="N$11">
+<contactref element="IC1" pad="1"/>
+<contactref element="R4" pad="2"/>
+<contactref element="T2" pad="C"/>
+<wire x1="2.54" y1="-15.24" x2="34.29" y2="13.97" width="0" layer="19" extent="1-1"/>
+<wire x1="-16.51" y1="-11.43" x2="2.54" y2="-15.24" width="0" layer="19" extent="1-1"/>
+</signal>
+<signal name="N$12">
+<contactref element="R5" pad="2"/>
+<contactref element="T2" pad="B"/>
+<wire x1="-13.97" y1="-11.43" x2="-6.35" y2="-20.32" width="0" layer="19" extent="1-1"/>
 </signal>
 </signals>
 <errors>
