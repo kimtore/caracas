@@ -44,15 +44,16 @@ Base resistance between pins:
 
             Pin1    Pin2    Resistance
 --------------------------------------
-            6       7       100.000 ohm
-            6       8       100.000 ohm
 
 Resistance between pins as follows:
 
-Function    Pin1    Pin2    Resistance
---------------------------------------
-Mode        6       8       1 ohm
-Up          6       7       1 ohm
-Down        6       7       330 ohm
-Vol+        6       7       1.000 ohm
-Vol-        6       7       3.100 ohm
+Function    Pin1    Pin2    Resistance      ADC value ref=3.33V divider=1k
+--------------------------------------------------------------------------
+            6       7       100.000 ohm     9    - 10
+            6       8       100.000 ohm     9    - 10
+Mode        6       8       1 ohm           1022 - 1023 (0 ohm)
+Up          6       7       1 ohm           1022 - 1023 (0 ohm)
+Down        6       7       330 ohm         768  - 769
+Vol+        6       7       1.000 ohm       508  - 509
+Vol-        6       7       3.100 ohm       249  - 250
+
