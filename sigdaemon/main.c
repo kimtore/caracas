@@ -51,11 +51,18 @@ typedef unsigned char       uint8_t;
 #define EXIT_WIRING 2
 
 /**
+ * How long to sleep between each event
+ */
+#define DELAY_MICROSECONDS  2
+
+/**
  * Button events
  */
 #define EVENT_NONE          0
 #define EVENT_PRESS         1
 #define EVENT_DEPRESS       2
+#define EVENT_LEFT          3
+#define EVENT_RIGHT         4
 
 struct opts_t {
     int running;
@@ -78,17 +85,19 @@ static uint8_t get_pin_state(uint8_t pin)
     return pin_state[pin];
 }
 
-const char *pin_name(uint8_t pin)
+const char *event_name(uint8_t event)
 {
-    switch(pin) {
-        case PIN_ROTARY_CLICK:
-            return "ROTARY_CLICK";
-        case PIN_ROTARY_LEFT:
-            return "ROTARY_LEFT";
-        case PIN_ROTARY_RIGHT:
-            return "ROTARY_RIGHT";
-        case PIN_POWER_STATE:
-            return "POWER_STATE";
+    switch(event) {
+        case EVENT_NONE:
+            return "NONE";
+        case EVENT_PRESS:
+            return "PRESS";
+        case EVENT_DEPRESS:
+            return "DEPRESS";
+        case EVENT_LEFT:
+            return "LEFT";
+        case EVENT_RIGHT:
+            return "RIGHT";
         default:
             assert(0);
     }
@@ -117,10 +126,16 @@ static void init_pin_rotary_click()
 
 static void init_pin_rotary_left()
 {
+    pinMode(PIN_ROTARY_LEFT, INPUT);
+    pullUpDnControl(PIN_ROTARY_LEFT, PUD_UP);
+    set_pin_state(PIN_ROTARY_LEFT, HIGH);
 }
 
 static void init_pin_rotary_right()
 {
+    pinMode(PIN_ROTARY_RIGHT, INPUT);
+    pullUpDnControl(PIN_ROTARY_RIGHT, PUD_UP);
+    set_pin_state(PIN_ROTARY_RIGHT, HIGH);
 }
 
 static void init_pin_power_state()
@@ -151,11 +166,38 @@ static uint8_t get_pin_event(uint8_t pin)
 
     if (state == old_state) {
         return EVENT_NONE;
-    } else if (pin_active(pin)) {
+    }
+
+    if (pin_active(pin)) {
         return EVENT_PRESS;
     } else {
         return EVENT_DEPRESS;
     }
+}
+
+static uint8_t get_rotary_event(uint8_t pin_left, uint8_t pin_right)
+{
+    static uint8_t state_left_old = 0;
+    uint8_t state_left;
+    uint8_t state_right;
+    uint8_t event = EVENT_NONE;
+
+    get_pin_event(pin_left);
+    get_pin_event(pin_right);
+
+    state_left = pin_active(pin_left);
+    state_right = pin_active(pin_right);
+
+    if (!state_left_old && state_left) {
+        if (state_right) {
+            event = EVENT_LEFT;
+        } else {
+            event = EVENT_RIGHT;
+        }
+    }
+    state_left_old = state_left;
+
+    return event;
 }
 
 static int log_zmq_send(void *socket, const char *str)
@@ -174,9 +216,14 @@ static int run_loop(void *context, void *publisher)
     const char *name;
     uint8_t event;
 
-    if ((event = get_pin_event(PIN_ROTARY_CLICK)) != EVENT_NONE) {
-        name = pin_name(PIN_ROTARY_CLICK);
-        sprintf(msg, "%s %d", name, event);
+    event = get_pin_event(PIN_ROTARY_CLICK);
+    if (event == EVENT_NONE) {
+        event = get_rotary_event(PIN_ROTARY_LEFT, PIN_ROTARY_RIGHT);
+    }
+
+    if (event != EVENT_NONE) {
+        name = event_name(event);
+        sprintf(msg, "ROTARY %s", name);
         if (log_zmq_send(publisher, msg) != 0) {
             return 1;
         }
@@ -226,7 +273,7 @@ int main(int argc, char **argv)
 
     while (opts.running) {
         run_loop(context, publisher);
-        delay(25);
+        delay(DELAY_MICROSECONDS);
     }
 
     printf("Received shutdown signal, exiting.\n");
