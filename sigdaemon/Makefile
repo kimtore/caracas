@@ -1,2 +1,2 @@
 sigdaemon: main.c
-	gcc -o sigdaemon main.c -lwiringPi -lzmq
+	gcc -O2 -o sigdaemon main.c -lwiringPi -lzmq

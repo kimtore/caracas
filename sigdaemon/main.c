@@ -12,6 +12,7 @@
 #include <stdio.h>
 #include <signal.h>
 #include <wiringPi.h>
+#include <mcp3004.h>
 #include <zmq.h>
 
 /*
@@ -28,12 +29,6 @@ typedef unsigned char       uint8_t;
 #define PIN_ROTARY_RIGHT    1   /* BCM_GPIO pin 18, physical pin 12 */
 
 /**
- * Suicide pin, output.
- * Set HIGH to request power cut-off from the power board.
- */
-#define PIN_SUICIDE         0   /* BCM_GPIO pin 17, physical pin 11 */
-
-/**
  * Power state, input.
  * This pin is HIGH when the ignition key is switched on.
  */
@@ -42,13 +37,19 @@ typedef unsigned char       uint8_t;
 /**
  * Max size of wiringPi pin numbering scheme
  */
-#define PIN_MAX             16
+#define PIN_MAX             101
+
+/**
+ * SPI parameters
+ */
+#define SPI_BASE            100
+#define SPI_CHAN            0
 
 /**
  * Exit codes
  */
-#define EXIT_ZMQ 1
-#define EXIT_WIRING 2
+#define EXIT_ZMQ            1
+#define EXIT_WIRING         2
 
 /**
  * How long to sleep between each event
@@ -64,6 +65,9 @@ typedef unsigned char       uint8_t;
 #define EVENT_LEFT          3
 #define EVENT_RIGHT         4
 
+/**
+ * Program options
+ */
 struct opts_t {
     int running;
 };
@@ -75,16 +79,26 @@ struct opts_t opts;
  */
 uint8_t pin_state[PIN_MAX+1];
 
+
+/**
+ * Save pin state in the pin_state struct.
+ */
 static void set_pin_state(uint8_t pin, uint8_t state)
 {
     pin_state[pin] = state;
 }
 
+/**
+ * Read pin state from the pin_state struct.
+ */
 static uint8_t get_pin_state(uint8_t pin)
 {
     return pin_state[pin];
 }
 
+/**
+ * Convert an event integer to a string.
+ */
 const char *event_name(uint8_t event)
 {
     switch(event) {
@@ -103,6 +117,10 @@ const char *event_name(uint8_t event)
     }
 }
 
+/**
+ * Return true if a pin is considered active or pressed,
+ * or false otherwise.
+ */
 static uint8_t pin_active(uint8_t pin)
 {
     switch(pin) {
@@ -117,6 +135,9 @@ static uint8_t pin_active(uint8_t pin)
     }
 }
 
+/**
+ * Pin initialization for rotary click button.
+ */
 static void init_pin_rotary_click()
 {
     pinMode(PIN_ROTARY_CLICK, INPUT);
@@ -124,6 +145,9 @@ static void init_pin_rotary_click()
     set_pin_state(PIN_ROTARY_CLICK, HIGH);
 }
 
+/**
+ * Pin initialization for rotary left switch.
+ */
 static void init_pin_rotary_left()
 {
     pinMode(PIN_ROTARY_LEFT, INPUT);
@@ -131,6 +155,9 @@ static void init_pin_rotary_left()
     set_pin_state(PIN_ROTARY_LEFT, HIGH);
 }
 
+/**
+ * Pin initialization for rotary right switch.
+ */
 static void init_pin_rotary_right()
 {
     pinMode(PIN_ROTARY_RIGHT, INPUT);
@@ -138,14 +165,27 @@ static void init_pin_rotary_right()
     set_pin_state(PIN_ROTARY_RIGHT, HIGH);
 }
 
+/**
+ * Pin initialization for power state input.
+ */
 static void init_pin_power_state()
 {
+    pinMode(PIN_POWER_STATE, INPUT);
+    pullUpDnControl(PIN_POWER_STATE, PUD_DOWN);
+    set_pin_state(PIN_POWER_STATE, LOW);
 }
 
-static void init_pin_suicide()
+/**
+ * Initialize ADC communication with MPC3008.
+ */
+static void init_adc()
 {
+    mcp3004Setup(SPI_BASE, SPI_CHAN);
 }
 
+/**
+ * Initialize all input pins.
+ */
 static void init_pins()
 {
     memset(&pin_state, 0, sizeof(pin_state));
@@ -154,9 +194,11 @@ static void init_pins()
     init_pin_rotary_left();
     init_pin_rotary_right();
     init_pin_power_state();
-    init_pin_suicide();
 }
 
+/**
+ * Check whether a pin has new events.
+ */
 static uint8_t get_pin_event(uint8_t pin)
 {
     uint8_t state = digitalRead(pin);
@@ -175,6 +217,9 @@ static uint8_t get_pin_event(uint8_t pin)
     }
 }
 
+/**
+ * Check whether the rotary switch has events.
+ */
 static uint8_t get_rotary_event(uint8_t pin_left, uint8_t pin_right)
 {
     static uint8_t state_left_old = 0;
@@ -200,6 +245,18 @@ static uint8_t get_rotary_event(uint8_t pin_left, uint8_t pin_right)
     return event;
 }
 
+/**
+ * Read from MCP3008.
+ * FIXME
+ */
+static uint8_t get_adc_event()
+{
+    analogRead(SPI_BASE + SPI_CHAN);
+}
+
+/**
+ * Send an event using ZeroMQ, and log the output.
+ */
 static int log_zmq_send(void *socket, const char *str)
 {
     int len = strlen(str);
@@ -210,6 +267,9 @@ static int log_zmq_send(void *socket, const char *str)
     return zmq_send(socket, &msg, 0);
 }
 
+/**
+ * Inner main loop.
+ */
 static int run_loop(void *context, void *publisher)
 {
     char msg[32];
@@ -229,20 +289,31 @@ static int run_loop(void *context, void *publisher)
         }
     }
 
+    get_adc_event();
+
     return 0;
 }
 
+/**
+ * Initialize options.
+ */
 static void clear_opts(struct opts_t *o)
 {
     o->running = 1;
 }
 
+/**
+ * Catch signals from operating system.
+ */
 void signal_handler(int s)
 {
     printf("Caught signal %d\n", s);
     opts.running = 0;
 }
 
+/**
+ * Main program.
+ */
 int main(int argc, char **argv)
 {
     void *context = zmq_init(1);
@@ -260,6 +331,7 @@ int main(int argc, char **argv)
     }
 
     init_pins();
+    init_adc();
 
     act.sa_handler = signal_handler;
     act.sa_flags = 0;
