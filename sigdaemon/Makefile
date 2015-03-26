@@ -1,7 +1,7 @@
 all: sigd suicided
 
-sigd:
-	gcc -O2 -o sigd main.c -lwiringPi -lzmq
+sigd: sigd.c
+	gcc -O2 -o sigd sigd.c -lwiringPi -lzmq
 
-suicided:
+suicided: suicided.c
 	gcc -O2 -o suicided suicided.c -lwiringPi
