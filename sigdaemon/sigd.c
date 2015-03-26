@@ -9,6 +9,7 @@
 
 #include <assert.h>
 #include <string.h>
+#include <stdlib.h>
 #include <stdio.h>
 #include <signal.h>
 #include <wiringPi.h>
@@ -85,6 +86,10 @@ void *zmq_publisher;
  */
 uint8_t pin_state[PIN_MAX+1];
 
+/**
+ * Forward declarations
+ */
+void run_loop_rotary();
 
 /**
  * Save pin state in the pin_state struct.
@@ -148,6 +153,7 @@ static void init_pin_rotary_click()
 {
     pinMode(PIN_ROTARY_CLICK, INPUT);
     pullUpDnControl(PIN_ROTARY_CLICK, PUD_UP);
+    wiringPiISR(PIN_ROTARY_CLICK, INT_EDGE_BOTH, run_loop_rotary);
     set_pin_state(PIN_ROTARY_CLICK, HIGH);
 }
 
@@ -158,6 +164,7 @@ static void init_pin_rotary_left()
 {
     pinMode(PIN_ROTARY_LEFT, INPUT);
     pullUpDnControl(PIN_ROTARY_LEFT, PUD_UP);
+    wiringPiISR(PIN_ROTARY_LEFT, INT_EDGE_BOTH, run_loop_rotary);
     set_pin_state(PIN_ROTARY_LEFT, HIGH);
 }
 
@@ -168,6 +175,7 @@ static void init_pin_rotary_right()
 {
     pinMode(PIN_ROTARY_RIGHT, INPUT);
     pullUpDnControl(PIN_ROTARY_RIGHT, PUD_UP);
+    wiringPiISR(PIN_ROTARY_RIGHT, INT_EDGE_BOTH, run_loop_rotary);
     set_pin_state(PIN_ROTARY_RIGHT, HIGH);
 }
 
@@ -276,7 +284,7 @@ static int log_zmq_send(void *socket, const char *str)
 /**
  * Inner main loop for rotary buttons.
  */
-static int run_loop_rotary()
+void run_loop_rotary()
 {
     char msg[32];
     const char *name;
@@ -291,11 +299,10 @@ static int run_loop_rotary()
         name = event_name(event);
         sprintf(msg, "ROTARY %s", name);
         if (log_zmq_send(zmq_publisher, msg) != 0) {
-            return 1;
+            perror("ZeroMQ error");
+            exit(EXIT_ZMQ);
         }
     }
-
-    return 0;
 }
 
 /**
@@ -347,10 +354,7 @@ int main(int argc, char **argv)
 
     printf("Caracas daemon started.\n");
 
-    while (opts.running) {
-        run_loop_rotary();
-        delay(DELAY_MICROSECONDS);
-    }
+    sigsuspend(&act.sa_mask);
 
     printf("Received shutdown signal, exiting.\n");
 
