@@ -5,3 +5,6 @@ sigd: sigd.c
 
 clean:
 	rm sigd
+
+install: all
+	install sigd /usr/local/bin/sigd
