@@ -90,6 +90,7 @@ uint8_t pin_state[PIN_MAX+1];
  * Forward declarations
  */
 void run_loop_rotary();
+void power_state_callback();
 
 /**
  * Save pin state in the pin_state struct.
@@ -126,6 +127,14 @@ const char *event_name(uint8_t event)
         default:
             assert(0);
     }
+}
+
+/**
+ * Convert active state to a string.
+ */
+const char *active_name(uint8_t active)
+{
+    return active ? "ON" : "OFF";
 }
 
 /**
@@ -186,6 +195,7 @@ static void init_pin_power_state()
 {
     pinMode(PIN_POWER_STATE, INPUT);
     pullUpDnControl(PIN_POWER_STATE, PUD_DOWN);
+    wiringPiISR(PIN_POWER_STATE, INT_EDGE_BOTH, power_state_callback);
     set_pin_state(PIN_POWER_STATE, LOW);
 }
 
@@ -300,8 +310,28 @@ void run_loop_rotary()
         sprintf(msg, "ROTARY %s", name);
         if (log_zmq_send(zmq_publisher, msg) != 0) {
             perror("ZeroMQ error");
-            exit(EXIT_ZMQ);
+            opts.running = 0;
         }
+    }
+}
+
+/**
+ * Callback function for interrupt
+ */
+void power_state_callback()
+{
+    char msg[32];
+    const char *name;
+    uint8_t active;
+
+    get_pin_event(PIN_POWER_STATE);
+    active = pin_active(PIN_POWER_STATE);
+    name = active_name(active);
+
+    sprintf(msg, "POWER %s", name);
+    if (log_zmq_send(zmq_publisher, msg) != 0) {
+        perror("ZeroMQ error");
+        opts.running = 0;
     }
 }
 
