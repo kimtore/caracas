@@ -7,7 +7,7 @@ import subprocess
 
 import mpd
 
-SOCK = "tcp://localhost:5555"
+SOCK = "tcp://localhost:9090"
 mode = 'neutral'
 mpd_client = mpd.MPDClient()
 

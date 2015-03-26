@@ -363,8 +363,8 @@ int main(int argc, char **argv)
     zmq_publisher = zmq_socket(zmq_context, ZMQ_PUB);
     struct sigaction act;
 
-    if ((zmq_bind(zmq_publisher, "tcp://*:5555")) != 0) {
-        perror("Fatal error: could not bind ZMQ socket tcp://*:5555");
+    if ((zmq_bind(zmq_publisher, "tcp://localhost:9090")) != 0) {
+        perror("Fatal error: could not bind ZMQ socket tcp://localhost:9090");
         return EXIT_ZMQ;
     }
 
