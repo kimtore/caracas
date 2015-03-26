@@ -287,7 +287,9 @@ static int log_zmq_send(void *socket, const char *str)
     zmq_msg_t msg;
     zmq_msg_init_size(&msg, len);
     strncpy(zmq_msg_data(&msg), str, len);
+#ifdef DEBUG
     printf("PUB: %s\n", str);
+#endif
     return zmq_send(socket, &msg, 0);
 }
 
