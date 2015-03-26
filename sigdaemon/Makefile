@@ -1,2 +1,7 @@
-sigdaemon: main.c
-	gcc -O2 -o sigdaemon main.c -lwiringPi -lzmq
+all: sigd suicided
+
+sigd:
+	gcc -O2 -o sigd main.c -lwiringPi -lzmq
+
+suicided:
+	gcc -O2 -o suicided suicided.c -lwiringPi
