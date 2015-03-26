@@ -9,7 +9,6 @@
 
 #include <assert.h>
 #include <string.h>
-#include <stdlib.h>
 #include <stdio.h>
 #include <signal.h>
 #include <wiringPi.h>
@@ -51,7 +50,6 @@ typedef unsigned char       uint8_t;
  */
 #define EXIT_ZMQ            1
 #define EXIT_WIRING         2
-#define EXIT_FORK           3
 
 /**
  * How long to sleep between each event
@@ -75,6 +73,12 @@ struct opts_t {
 };
 
 struct opts_t opts;
+
+/**
+ * ZeroMQ globals
+ */
+void *zmq_context;
+void *zmq_publisher;
 
 /**
  * Current state of pins
@@ -270,9 +274,9 @@ static int log_zmq_send(void *socket, const char *str)
 }
 
 /**
- * Inner main loop.
+ * Inner main loop for rotary buttons.
  */
-static int run_loop(void *context, void *publisher)
+static int run_loop_rotary()
 {
     char msg[32];
     const char *name;
@@ -286,12 +290,10 @@ static int run_loop(void *context, void *publisher)
     if (event != EVENT_NONE) {
         name = event_name(event);
         sprintf(msg, "ROTARY %s", name);
-        if (log_zmq_send(publisher, msg) != 0) {
+        if (log_zmq_send(zmq_publisher, msg) != 0) {
             return 1;
         }
     }
-
-    get_adc_event();
 
     return 0;
 }
@@ -314,33 +316,18 @@ void signal_handler(int s)
 }
 
 /**
- * Main program for rotary buttons.
- */
-static void main_rotary(void *context)
-{
-    void *publisher = zmq_socket(context, ZMQ_PUB);
-
-    if ((zmq_bind(publisher, "tcp://*:5555")) != 0) {
-        perror("Fatal error: could not bind ZMQ socket tcp://*:5555");
-        exit(EXIT_ZMQ);
-    }
-
-    while (opts.running) {
-        run_loop(context, publisher);
-        delay(DELAY_MICROSECONDS);
-    }
-
-    zmq_close(publisher);
-}
-
-/**
  * Main program.
  */
 int main(int argc, char **argv)
 {
-    int pid;
-    void *context = zmq_init(1);
+    zmq_context = zmq_init(1);
+    zmq_publisher = zmq_socket(zmq_context, ZMQ_PUB);
     struct sigaction act;
+
+    if ((zmq_bind(zmq_publisher, "tcp://*:5555")) != 0) {
+        perror("Fatal error: could not bind ZMQ socket tcp://*:5555");
+        return EXIT_ZMQ;
+    }
 
     if (wiringPiSetup()) {
         perror("Fatal error: could not initialize wiringPi");
@@ -350,33 +337,25 @@ int main(int argc, char **argv)
     init_pins();
     init_adc();
 
-    clear_opts(&opts);
-
-    printf("Caracas daemon started.\n");
-
-    /* Fork out the rotary button decoder code */
-    pid = fork();
-    if (pid == -1) {
-        perror("fork() failed");
-        return EXIT_FORK;
-    } else if (pid > 0) {
-        main_rotary(context);
-        return EXIT_SUCCESS;
-    }
-
-    /* Set up signal handler */
     act.sa_handler = signal_handler;
     act.sa_flags = 0;
     sigemptyset(&act.sa_mask);
     sigaction(SIGTERM, &act, NULL);
     sigaction(SIGINT, &act, NULL);
 
-    /* Wait for the rest of the processes */
-    while(wait());
+    clear_opts(&opts);
+
+    printf("Caracas daemon started.\n");
+
+    while (opts.running) {
+        run_loop_rotary();
+        delay(DELAY_MICROSECONDS);
+    }
 
     printf("Received shutdown signal, exiting.\n");
 
-    zmq_term(context);
+    zmq_close(zmq_publisher);
+    zmq_term(zmq_context);
 
     return 0;
 }
