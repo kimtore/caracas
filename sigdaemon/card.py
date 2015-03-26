@@ -24,7 +24,6 @@ logging.info("Listening for events from signal daemon on %s" % SOCK)
 
 def run_dmc(cmd):
     logging.info("Running command: %s" % ' '.join(cmd))
-    return
     process = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     stdout, stderr = process.communicate()
     exit_code = process.returncode
