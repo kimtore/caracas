@@ -6,5 +6,10 @@ sigd: sigd.c
 clean:
 	rm sigd
 
-install: all
+install-sigd: sigd
 	install sigd /usr/local/bin/sigd
+
+install-card:
+	install card.py /usr/local/bin/card.py
+
+install: install-sigd install-card

@@ -10,7 +10,6 @@ import mpd
 SOCK = "tcp://localhost:9090"
 
 button_mode = 'neutral'
-button_mode = 'mode'
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s %(levelname)s %(message)s')
 logging.info("Setting up ZeroMQ socket...")
