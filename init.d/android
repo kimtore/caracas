@@ -1,7 +1,7 @@
 #! /bin/sh
 ### BEGIN INIT INFO
 # Provides:          android
-# Required-Start:    $local_fs mpd
+# Required-Start:    $local_fs
 # Required-Stop:     $local_fs $network
 # Default-Start:     2 3 4 5
 # Default-Stop:      0
@@ -31,15 +31,8 @@ do_start()
     [ "$VERBOSE" != no ] && log_action_msg "Starting ADB in root mode"
     /usr/local/bin/adb root || return 2
 
-    [ "$VERBOSE" != no ] && log_action_msg "Turning on Android screen"
-    /usr/local/bin/adb shell input keyevent 26 || return 2
-
-    [ "$VERBOSE" != no ] && log_action_msg "Disabling flight mode"
-    /usr/local/bin/adb shell settings put global airplane_mode_on 0 || return 2
-    /usr/local/bin/adb shell am broadcast -a android.intent.action.AIRPLANE_MODE --ez state false || return 2
-
-    [ "$VERBOSE" != no ] && log_action_msg "Switching on USB tethering"
-    /usr/local/bin/adb shell service call connectivity 34 i32 1 || return 2
+    [ "$VERBOSE" != no ] && log_action_msg "Turning on Android features"
+    /usr/local/bin/adb shell '(input keyevent 26 && settings put global airplane_mode_on 0 && am broadcast -a android.intent.action.AIRPLANE_MODE --ez state false && service call connectivity 34 i32 1)' || return 2
 }
 
 #
