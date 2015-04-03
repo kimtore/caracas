@@ -1,0 +1,77 @@
+#! /bin/sh
+### BEGIN INIT INFO
+# Provides:          android
+# Required-Start:    $local_fs
+# Required-Stop:     $local_fs $network
+# Default-Start:     2 3 4 5
+# Default-Stop:      0
+# Short-Description: Example initscript
+# Description:       Start and stop the Android device
+### END INIT INFO
+
+# Author: Kim Tore Jensen <kim@incendio.no>
+SCRIPTNAME=android
+
+# Read configuration variable file if it is present
+[ -r /etc/default/$NAME ] && . /etc/default/$NAME
+
+# Load the VERBOSE setting and other rcS variables
+. /lib/init/vars.sh
+
+# Define LSB log_* functions.
+# Depend on lsb-base (>= 3.2-14) to ensure that this file is present
+# and status_of_proc is working.
+. /lib/lsb/init-functions
+
+#
+# Function that starts the daemon/service
+#
+do_start()
+{
+    [ "$VERBOSE" != no ] && log_action_msg "Starting ADB in root mode"
+    /usr/local/bin/adb root || return 2
+
+    [ "$VERBOSE" != no ] && log_action_msg "Turning on Android features"
+    /usr/local/bin/adb shell '(input keyevent 26 && settings put global airplane_mode_on 0 && am broadcast -a android.intent.action.AIRPLANE_MODE --ez state false && service call connectivity 34 i32 1)' || return 2
+}
+
+#
+# Function that stops the daemon/service
+#
+do_stop()
+{
+    log_action_msg "Turning off Android screen"
+    /usr/local/bin/adb shell input keyevent 26 || return 2
+
+    log_action_msg "Enabling flight mode"
+    /usr/local/bin/adb shell settings put global airplane_mode_on 1 || return 2
+    /usr/local/bin/adb shell am broadcast -a android.intent.action.AIRPLANE_MODE --ez state true || return 2
+
+    log_action_msg "Stopping Android applications" || return 2
+    /usr/local/bin/adb shell am force-stop com.namelessdev.mpdroid
+}
+
+case "$1" in
+    start)
+        [ "$VERBOSE" != no ] && log_daemon_msg "Starting $DESC" "$NAME"
+        do_start
+        case "$?" in
+            0|1) [ "$VERBOSE" != no ] && log_end_msg 0 ;;
+            2) [ "$VERBOSE" != no ] && log_end_msg 1 ;;
+        esac
+        ;;
+    stop)
+        [ "$VERBOSE" != no ] && log_daemon_msg "Stopping $DESC" "$NAME"
+        do_stop
+        case "$?" in
+            0|1) [ "$VERBOSE" != no ] && log_end_msg 0 ;;
+            2) [ "$VERBOSE" != no ] && log_end_msg 1 ;;
+        esac
+        ;;
+    *)
+        echo "Usage: $SCRIPTNAME {start|stop}" >&2
+        exit 3
+        ;;
+esac
+
+:
