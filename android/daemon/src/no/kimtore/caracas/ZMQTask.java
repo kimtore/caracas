@@ -10,7 +10,7 @@ public class ZMQTask extends AsyncTask<Void, Void, Void> {
 	protected ZMQ.Socket req;
 	
 	public final String DSN = "tcp://10.0.0.10:5555";
-	
+
 	private void setup() {
 		context = ZMQ.context(1);
 		Log.i("caracas", String.format("Attempting to connect ZMQ REQ socket %s...", DSN));
