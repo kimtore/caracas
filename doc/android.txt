@@ -1,0 +1,4 @@
+Changes in build.prop:
+
+ro.sf.lcd_density=192
+qemu.hw.mainkeys=0
