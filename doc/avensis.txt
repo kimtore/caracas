@@ -28,6 +28,11 @@ Panel front safe dimensions:
     Width   195 mm
     Height   95 mm
 
+Panel front exact dimensions:
+
+    Width   202.5 mm
+    Height  102.9 mm
+
 Stereo cage physical specifications:
 
     Thickness custom box    12.2 mm
