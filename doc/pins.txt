@@ -1,19 +1,20 @@
 GPIO pin usage
 --------------
 
-2   +5V constant    board
-4   +5V constant    board
-6   GND             board                   note: switched, different potensial than chassis GND
-    GND             header, rotary click
-8   GPIO14          header, rotary click
-10  GPIO15          header, rotary binary
-12  GPIO18          header, rotary binary
-14  GND             header, rotary binary
-16  Suicide out     board
-18  +12V ignition   board
-24  SPI CS          board
+2   +5V constant        board
+4   +5V constant        board
+6   GND                 board                   note: switched, different potensial than chassis GND
+    GND                 header, rotary click
+8   GPIO14              header, rotary click
+10  GPIO15              header, rotary binary
+12  GPIO18              header, rotary binary
+14  GND                 header, rotary binary
+16  Suicide out         board
+18  +12V ignition       board
+24  SPI CS              board
+32  Amplifier power     board
 
-13  
-19  SPI MOSI        board
-21  SPI MISO        board
-23  SPI CLK         board
+17  +3.3V to ADC        board
+19  SPI MOSI            board
+21  SPI MISO            board
+23  SPI CLK             board
