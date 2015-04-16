@@ -8,20 +8,20 @@
 </settings>
 <grid distance="0.1" unitdist="inch" unit="inch" style="lines" multiple="1" display="no" altdistance="0.01" altunitdist="inch" altunit="inch"/>
 <layers>
-<layer number="1" name="Top" color="4" fill="1" visible="no" active="no"/>
-<layer number="16" name="Bottom" color="1" fill="1" visible="no" active="no"/>
-<layer number="17" name="Pads" color="2" fill="1" visible="no" active="no"/>
-<layer number="18" name="Vias" color="2" fill="1" visible="no" active="no"/>
-<layer number="19" name="Unrouted" color="6" fill="1" visible="no" active="no"/>
-<layer number="20" name="Dimension" color="15" fill="1" visible="no" active="no"/>
-<layer number="21" name="tPlace" color="7" fill="1" visible="no" active="no"/>
-<layer number="22" name="bPlace" color="7" fill="1" visible="no" active="no"/>
-<layer number="23" name="tOrigins" color="15" fill="1" visible="no" active="no"/>
-<layer number="24" name="bOrigins" color="15" fill="1" visible="no" active="no"/>
-<layer number="25" name="tNames" color="7" fill="1" visible="no" active="no"/>
-<layer number="26" name="bNames" color="7" fill="1" visible="no" active="no"/>
-<layer number="27" name="tValues" color="7" fill="1" visible="no" active="no"/>
-<layer number="28" name="bValues" color="7" fill="1" visible="no" active="no"/>
+<layer number="1" name="Top" color="4" fill="1" visible="yes" active="no"/>
+<layer number="16" name="Bottom" color="1" fill="1" visible="yes" active="no"/>
+<layer number="17" name="Pads" color="2" fill="1" visible="yes" active="no"/>
+<layer number="18" name="Vias" color="2" fill="1" visible="yes" active="no"/>
+<layer number="19" name="Unrouted" color="6" fill="1" visible="yes" active="no"/>
+<layer number="20" name="Dimension" color="15" fill="1" visible="yes" active="no"/>
+<layer number="21" name="tPlace" color="7" fill="1" visible="yes" active="no"/>
+<layer number="22" name="bPlace" color="7" fill="1" visible="yes" active="no"/>
+<layer number="23" name="tOrigins" color="15" fill="1" visible="yes" active="no"/>
+<layer number="24" name="bOrigins" color="15" fill="1" visible="yes" active="no"/>
+<layer number="25" name="tNames" color="7" fill="1" visible="yes" active="no"/>
+<layer number="26" name="bNames" color="7" fill="1" visible="yes" active="no"/>
+<layer number="27" name="tValues" color="7" fill="1" visible="yes" active="no"/>
+<layer number="28" name="bValues" color="7" fill="1" visible="yes" active="no"/>
 <layer number="29" name="tStop" color="7" fill="3" visible="no" active="no"/>
 <layer number="30" name="bStop" color="7" fill="6" visible="no" active="no"/>
 <layer number="31" name="tCream" color="7" fill="4" visible="no" active="no"/>
@@ -30,8 +30,8 @@
 <layer number="34" name="bFinish" color="6" fill="6" visible="no" active="no"/>
 <layer number="35" name="tGlue" color="7" fill="4" visible="no" active="no"/>
 <layer number="36" name="bGlue" color="7" fill="5" visible="no" active="no"/>
-<layer number="37" name="tTest" color="7" fill="1" visible="no" active="no"/>
-<layer number="38" name="bTest" color="7" fill="1" visible="no" active="no"/>
+<layer number="37" name="tTest" color="7" fill="1" visible="yes" active="no"/>
+<layer number="38" name="bTest" color="7" fill="1" visible="yes" active="no"/>
 <layer number="39" name="tKeepout" color="4" fill="11" visible="no" active="no"/>
 <layer number="40" name="bKeepout" color="1" fill="11" visible="no" active="no"/>
 <layer number="41" name="tRestrict" color="4" fill="10" visible="no" active="no"/>
@@ -39,12 +39,12 @@
 <layer number="43" name="vRestrict" color="2" fill="10" visible="no" active="no"/>
 <layer number="44" name="Drills" color="7" fill="1" visible="no" active="no"/>
 <layer number="45" name="Holes" color="7" fill="1" visible="no" active="no"/>
-<layer number="46" name="Milling" color="3" fill="1" visible="no" active="no"/>
-<layer number="47" name="Measures" color="7" fill="1" visible="no" active="no"/>
-<layer number="48" name="Document" color="7" fill="1" visible="no" active="no"/>
-<layer number="49" name="Reference" color="7" fill="1" visible="no" active="no"/>
-<layer number="51" name="tDocu" color="7" fill="1" visible="no" active="no"/>
-<layer number="52" name="bDocu" color="7" fill="1" visible="no" active="no"/>
+<layer number="46" name="Milling" color="3" fill="1" visible="yes" active="no"/>
+<layer number="47" name="Measures" color="7" fill="1" visible="yes" active="no"/>
+<layer number="48" name="Document" color="7" fill="1" visible="yes" active="no"/>
+<layer number="49" name="Reference" color="7" fill="1" visible="yes" active="no"/>
+<layer number="51" name="tDocu" color="7" fill="1" visible="yes" active="no"/>
+<layer number="52" name="bDocu" color="7" fill="1" visible="yes" active="no"/>
 <layer number="91" name="Nets" color="2" fill="1" visible="yes" active="yes"/>
 <layer number="92" name="Busses" color="1" fill="1" visible="yes" active="yes"/>
 <layer number="93" name="Pins" color="2" fill="1" visible="no" active="yes"/>
@@ -10188,13 +10188,6 @@ In this library the device names are the same as the pin names of the symbols, t
 </package>
 <package name="22-23-2091">
 <description>.100" (2.54mm) Center Header - 9 Pin</description>
-<wire x1="-11.43" y1="3.175" x2="11.43" y2="3.175" width="0.254" layer="21"/>
-<wire x1="11.43" y1="3.175" x2="11.43" y2="1.27" width="0.254" layer="21"/>
-<wire x1="11.43" y1="1.27" x2="11.43" y2="-3.175" width="0.254" layer="21"/>
-<wire x1="11.43" y1="-3.175" x2="-11.43" y2="-3.175" width="0.254" layer="21"/>
-<wire x1="-11.43" y1="-3.175" x2="-11.43" y2="1.27" width="0.254" layer="21"/>
-<wire x1="-11.43" y1="1.27" x2="-11.43" y2="3.175" width="0.254" layer="21"/>
-<wire x1="-11.43" y1="1.27" x2="11.43" y2="1.27" width="0.254" layer="21"/>
 <pad name="1" x="-10.16" y="0" drill="1" shape="long" rot="R90"/>
 <pad name="2" x="-7.62" y="0" drill="1" shape="long" rot="R90"/>
 <pad name="3" x="-5.08" y="0" drill="1" shape="long" rot="R90"/>
@@ -12491,21 +12484,21 @@ W = angled&lt;p&gt;
 </class>
 </classes>
 <parts>
-<part name="RASPBERRYPI" library="con-lstb" deviceset="MA20-2" device=""/>
+<part name="RASPBERRY_PI_GPIO" library="con-lstb" deviceset="MA20-2" device=""/>
 <part name="U$1" library="caracas" deviceset="MKDS3" device=""/>
 <part name="SUPPLY2" library="supply2" deviceset="GND" device=""/>
 <part name="MCP3008" library="mpc3008" deviceset="MCP3008-I/P" device=""/>
 <part name="R1" library="rcl" deviceset="R-EU_" device="0207/10" value="870"/>
 <part name="R10" library="rcl" deviceset="R-EU_" device="0207/10" value="1k"/>
 <part name="R9" library="rcl" deviceset="R-EU_" device="0207/10" value="1k"/>
-<part name="X2" library="con-molex" deviceset="22-23-2021" device=""/>
-<part name="X3" library="con-molex" deviceset="22-23-2021" device=""/>
-<part name="X5" library="con-molex" deviceset="22-23-2021" device=""/>
-<part name="X1" library="con-molex" deviceset="22-23-2021" device=""/>
-<part name="X6" library="con-molex" deviceset="22-23-2091" device=""/>
+<part name="12V_IN" library="con-molex" deviceset="22-23-2021" device=""/>
+<part name="GND_2" library="con-molex" deviceset="22-23-2021" device=""/>
+<part name="+5VOUT" library="con-molex" deviceset="22-23-2021" device=""/>
+<part name="GND_1" library="con-molex" deviceset="22-23-2021" device=""/>
+<part name="ADC" library="con-molex" deviceset="22-23-2091" device="" value="22-23-2091"/>
 <part name="Q1" library="transistor-power" deviceset="IRLZ44Z" device=""/>
 <part name="D1" library="diode" deviceset="1N4728" device=""/>
-<part name="IC1" library="40xx" deviceset="4011" device="N"/>
+<part name="4011" library="40xx" deviceset="4011" device="N"/>
 <part name="+12V2" library="supply2" deviceset="VCC" device="" value="+12V"/>
 <part name="+12V1" library="supply2" deviceset="VCC" device="" value="+12V"/>
 <part name="R4" library="rcl" deviceset="R-EU_" device="0207/10" value="10k"/>
@@ -12517,37 +12510,37 @@ W = angled&lt;p&gt;
 <part name="T3" library="transistor" deviceset="*-NPN-" device="TO92-CBE" technology="BC547"/>
 <part name="R6" library="rcl" deviceset="R-EU_" device="0207/10" value="260"/>
 <part name="R7" library="rcl" deviceset="R-EU_" device="0207/10" value="115"/>
-<part name="C1" library="rcl" deviceset="CPOL-US" device="E2,5-6E"/>
+<part name="C1" library="rcl" deviceset="CPOL-US" device="E2,5-6E" value="0.1µ"/>
 </parts>
 <sheets>
 <sheet>
 <plain>
 </plain>
 <instances>
-<instance part="RASPBERRYPI" gate="G$1" x="7.62" y="38.1"/>
+<instance part="RASPBERRY_PI_GPIO" gate="G$1" x="7.62" y="38.1"/>
 <instance part="U$1" gate="G$1" x="-228.6" y="-58.42" rot="R270"/>
 <instance part="SUPPLY2" gate="GND" x="-177.8" y="-60.96"/>
 <instance part="MCP3008" gate="A" x="101.6" y="27.94"/>
 <instance part="R1" gate="G$1" x="-177.8" y="-33.02" rot="MR270"/>
 <instance part="R10" gate="G$1" x="43.18" y="27.94" rot="R180"/>
 <instance part="R9" gate="G$1" x="43.18" y="25.4" rot="R180"/>
-<instance part="X2" gate="-1" x="-213.36" y="12.7" rot="R90"/>
-<instance part="X2" gate="-2" x="-210.82" y="12.7" rot="R90"/>
-<instance part="X3" gate="-1" x="-208.28" y="-55.88" rot="R270"/>
-<instance part="X3" gate="-2" x="-210.82" y="-55.88" rot="R270"/>
-<instance part="X5" gate="-1" x="0" y="2.54"/>
-<instance part="X5" gate="-2" x="0" y="0"/>
-<instance part="X1" gate="-1" x="-218.44" y="-55.88" rot="R270"/>
-<instance part="X1" gate="-2" x="-220.98" y="-55.88" rot="R270"/>
-<instance part="X6" gate="-1" x="33.02" y="48.26" rot="R90"/>
-<instance part="X6" gate="-2" x="53.34" y="0" rot="R270"/>
+<instance part="12V_IN" gate="-1" x="-213.36" y="12.7" rot="R90"/>
+<instance part="12V_IN" gate="-2" x="-210.82" y="12.7" rot="R90"/>
+<instance part="GND_2" gate="-1" x="-208.28" y="-55.88" rot="R270"/>
+<instance part="GND_2" gate="-2" x="-210.82" y="-55.88" rot="R270"/>
+<instance part="+5VOUT" gate="-1" x="0" y="2.54"/>
+<instance part="+5VOUT" gate="-2" x="0" y="0"/>
+<instance part="GND_1" gate="-1" x="-218.44" y="-55.88" rot="R270"/>
+<instance part="GND_1" gate="-2" x="-220.98" y="-55.88" rot="R270"/>
+<instance part="ADC" gate="-1" x="33.02" y="48.26" rot="R90"/>
+<instance part="ADC" gate="-2" x="53.34" y="0" rot="R270"/>
 <instance part="U$1" gate="G$3" x="-220.98" y="15.24" rot="R90"/>
 <instance part="U$1" gate="G$4" x="-177.8" y="-12.7" rot="MR90"/>
 <instance part="Q1" gate="G$1" x="-93.98" y="-10.16"/>
 <instance part="D1" gate="1" x="-177.8" y="-45.72" rot="MR90"/>
-<instance part="IC1" gate="A" x="-116.84" y="-12.7"/>
-<instance part="IC1" gate="B" x="-116.84" y="-33.02"/>
-<instance part="IC1" gate="P" x="-198.12" y="-22.86"/>
+<instance part="4011" gate="A" x="-116.84" y="-12.7"/>
+<instance part="4011" gate="B" x="-116.84" y="-33.02"/>
+<instance part="4011" gate="P" x="-198.12" y="-22.86"/>
 <instance part="+12V2" gate="G$1" x="-228.6" y="15.24"/>
 <instance part="+12V1" gate="G$1" x="-142.24" y="15.24"/>
 <instance part="R4" gate="G$1" x="-142.24" y="-27.94" rot="R270"/>
@@ -12556,16 +12549,16 @@ W = angled&lt;p&gt;
 <instance part="R3" gate="G$1" x="-149.86" y="0" rot="R270"/>
 <instance part="T1" gate="G$1" x="-152.4" y="-22.86"/>
 <instance part="R2" gate="G$1" x="-165.1" y="-22.86"/>
-<instance part="X6" gate="-3" x="55.88" y="0" rot="R270"/>
-<instance part="X6" gate="-4" x="58.42" y="0" rot="R270"/>
-<instance part="X6" gate="-5" x="60.96" y="0" rot="R270"/>
-<instance part="X6" gate="-6" x="63.5" y="0" rot="R270"/>
-<instance part="X6" gate="-7" x="66.04" y="0" rot="R270"/>
-<instance part="X6" gate="-8" x="68.58" y="0" rot="R270"/>
-<instance part="X6" gate="-9" x="71.12" y="0" rot="R270"/>
+<instance part="ADC" gate="-3" x="55.88" y="0" rot="R270"/>
+<instance part="ADC" gate="-4" x="58.42" y="0" rot="R270"/>
+<instance part="ADC" gate="-5" x="60.96" y="0" rot="R270"/>
+<instance part="ADC" gate="-6" x="63.5" y="0" rot="R270"/>
+<instance part="ADC" gate="-7" x="66.04" y="0" rot="R270"/>
+<instance part="ADC" gate="-8" x="68.58" y="0" rot="R270"/>
+<instance part="ADC" gate="-9" x="71.12" y="0" rot="R270"/>
 <instance part="U$1" gate="G$2" x="-27.94" y="-22.86"/>
-<instance part="IC1" gate="C" x="10.16" y="-38.1"/>
-<instance part="IC1" gate="D" x="35.56" y="-38.1" rot="R180"/>
+<instance part="4011" gate="C" x="10.16" y="-38.1"/>
+<instance part="4011" gate="D" x="35.56" y="-38.1" rot="R180"/>
 <instance part="T3" gate="G$1" x="-43.18" y="-12.7"/>
 <instance part="R6" gate="G$1" x="-55.88" y="-12.7"/>
 <instance part="R7" gate="G$1" x="-40.64" y="-35.56" rot="R90"/>
@@ -12578,18 +12571,18 @@ W = angled&lt;p&gt;
 <segment>
 <pinref part="U$1" gate="G$1" pin="P$1"/>
 <wire x1="-228.6" y1="-53.34" x2="-220.98" y2="-53.34" width="0.1524" layer="91"/>
-<pinref part="X3" gate="-1" pin="S"/>
+<pinref part="GND_2" gate="-1" pin="S"/>
 <wire x1="-220.98" y1="-53.34" x2="-218.44" y2="-53.34" width="0.1524" layer="91"/>
 <wire x1="-218.44" y1="-53.34" x2="-210.82" y2="-53.34" width="0.1524" layer="91"/>
 <wire x1="-210.82" y1="-53.34" x2="-208.28" y2="-53.34" width="0.1524" layer="91"/>
 <junction x="-208.28" y="-53.34"/>
-<pinref part="X3" gate="-2" pin="S"/>
+<pinref part="GND_2" gate="-2" pin="S"/>
 <junction x="-210.82" y="-53.34"/>
-<pinref part="X1" gate="-1" pin="S"/>
+<pinref part="GND_1" gate="-1" pin="S"/>
 <junction x="-218.44" y="-53.34"/>
-<pinref part="X1" gate="-2" pin="S"/>
+<pinref part="GND_1" gate="-2" pin="S"/>
 <junction x="-220.98" y="-53.34"/>
-<pinref part="IC1" gate="P" pin="VSS"/>
+<pinref part="4011" gate="P" pin="VSS"/>
 <wire x1="-198.12" y1="-53.34" x2="-208.28" y2="-53.34" width="0.1524" layer="91"/>
 <wire x1="-198.12" y1="-30.48" x2="-198.12" y2="-53.34" width="0.1524" layer="91"/>
 <junction x="-198.12" y="-53.34"/>
@@ -12610,25 +12603,25 @@ W = angled&lt;p&gt;
 <wire x1="-149.86" y1="-27.94" x2="-149.86" y2="-53.34" width="0.1524" layer="91"/>
 <junction x="-149.86" y="-53.34"/>
 <wire x1="-198.12" y1="-53.34" x2="-177.8" y2="-53.34" width="0.1524" layer="91"/>
-<pinref part="IC1" gate="C" pin="O"/>
+<pinref part="4011" gate="C" pin="O"/>
 <wire x1="17.78" y1="-38.1" x2="22.86" y2="-38.1" width="0.1524" layer="91"/>
 <wire x1="22.86" y1="-38.1" x2="22.86" y2="-53.34" width="0.1524" layer="91"/>
 <wire x1="22.86" y1="-53.34" x2="-5.08" y2="-53.34" width="0.1524" layer="91"/>
-<pinref part="IC1" gate="D" pin="O"/>
+<pinref part="4011" gate="D" pin="O"/>
 <wire x1="-5.08" y1="-53.34" x2="-40.64" y2="-53.34" width="0.1524" layer="91"/>
 <wire x1="-40.64" y1="-53.34" x2="-91.44" y2="-53.34" width="0.1524" layer="91"/>
 <wire x1="27.94" y1="-38.1" x2="22.86" y2="-38.1" width="0.1524" layer="91"/>
-<pinref part="IC1" gate="D" pin="I1"/>
+<pinref part="4011" gate="D" pin="I1"/>
 <wire x1="43.18" y1="-35.56" x2="50.8" y2="-35.56" width="0.1524" layer="91"/>
 <wire x1="50.8" y1="-35.56" x2="50.8" y2="-40.64" width="0.1524" layer="91"/>
 <wire x1="50.8" y1="-40.64" x2="50.8" y2="-53.34" width="0.1524" layer="91"/>
 <wire x1="50.8" y1="-53.34" x2="22.86" y2="-53.34" width="0.1524" layer="91"/>
-<pinref part="IC1" gate="D" pin="I0"/>
+<pinref part="4011" gate="D" pin="I0"/>
 <wire x1="43.18" y1="-40.64" x2="50.8" y2="-40.64" width="0.1524" layer="91"/>
-<pinref part="IC1" gate="C" pin="I0"/>
+<pinref part="4011" gate="C" pin="I0"/>
 <wire x1="2.54" y1="-35.56" x2="-5.08" y2="-35.56" width="0.1524" layer="91"/>
 <wire x1="-5.08" y1="-35.56" x2="-5.08" y2="-40.64" width="0.1524" layer="91"/>
-<pinref part="IC1" gate="C" pin="I1"/>
+<pinref part="4011" gate="C" pin="I1"/>
 <wire x1="-5.08" y1="-40.64" x2="-5.08" y2="-53.34" width="0.1524" layer="91"/>
 <wire x1="2.54" y1="-40.64" x2="-5.08" y2="-40.64" width="0.1524" layer="91"/>
 <junction x="50.8" y="-40.64"/>
@@ -12652,7 +12645,7 @@ W = angled&lt;p&gt;
 <wire x1="-177.8" y1="-40.64" x2="-177.8" y2="-43.18" width="0.1524" layer="91"/>
 <wire x1="-177.8" y1="-40.64" x2="-187.96" y2="-40.64" width="0.1524" layer="91"/>
 <junction x="-177.8" y="-40.64"/>
-<pinref part="RASPBERRYPI" gate="G$1" pin="18"/>
+<pinref part="RASPBERRY_PI_GPIO" gate="G$1" pin="18"/>
 <wire x1="0" y1="33.02" x2="-187.96" y2="33.02" width="0.1524" layer="91"/>
 </segment>
 </net>
@@ -12671,18 +12664,18 @@ W = angled&lt;p&gt;
 </net>
 <net name="+5V" class="2">
 <segment>
-<pinref part="RASPBERRYPI" gate="G$1" pin="2"/>
+<pinref part="RASPBERRY_PI_GPIO" gate="G$1" pin="2"/>
 <wire x1="0" y1="12.7" x2="-2.54" y2="12.7" width="0.1524" layer="91"/>
 <wire x1="-2.54" y1="12.7" x2="-2.54" y2="2.54" width="0.1524" layer="91"/>
-<pinref part="RASPBERRYPI" gate="G$1" pin="4"/>
+<pinref part="RASPBERRY_PI_GPIO" gate="G$1" pin="4"/>
 <wire x1="-2.54" y1="2.54" x2="-2.54" y2="0" width="0.1524" layer="91"/>
 <wire x1="0" y1="15.24" x2="-2.54" y2="15.24" width="0.1524" layer="91"/>
 <wire x1="-2.54" y1="15.24" x2="-2.54" y2="12.7" width="0.1524" layer="91"/>
 <junction x="-2.54" y="12.7"/>
 <label x="-5.08" y="-2.54" size="1.778" layer="95" rot="R90"/>
-<pinref part="X5" gate="-1" pin="S"/>
+<pinref part="+5VOUT" gate="-1" pin="S"/>
 <junction x="-2.54" y="2.54"/>
-<pinref part="X5" gate="-2" pin="S"/>
+<pinref part="+5VOUT" gate="-2" pin="S"/>
 <pinref part="C1" gate="G$1" pin="+"/>
 <wire x1="-2.54" y1="2.54" x2="-15.24" y2="2.54" width="0.1524" layer="91"/>
 </segment>
@@ -12695,11 +12688,11 @@ W = angled&lt;p&gt;
 <pinref part="MCP3008" gate="A" pin="VREF"/>
 <wire x1="83.82" y1="43.18" x2="33.02" y2="43.18" width="0.1524" layer="91"/>
 <junction x="33.02" y="43.18"/>
-<pinref part="X6" gate="-1" pin="S"/>
+<pinref part="ADC" gate="-1" pin="S"/>
 <junction x="33.02" y="45.72"/>
 <wire x1="33.02" y1="30.48" x2="33.02" y2="43.18" width="0.1524" layer="91"/>
 <wire x1="33.02" y1="43.18" x2="33.02" y2="45.72" width="0.1524" layer="91"/>
-<pinref part="RASPBERRYPI" gate="G$1" pin="17"/>
+<pinref part="RASPBERRY_PI_GPIO" gate="G$1" pin="17"/>
 <wire x1="15.24" y1="33.02" x2="22.86" y2="33.02" width="0.1524" layer="91"/>
 <wire x1="22.86" y1="33.02" x2="22.86" y2="30.48" width="0.1524" layer="91"/>
 <wire x1="22.86" y1="30.48" x2="33.02" y2="30.48" width="0.1524" layer="91"/>
@@ -12712,8 +12705,8 @@ W = angled&lt;p&gt;
 <wire x1="-104.14" y1="-20.32" x2="-124.46" y2="-20.32" width="0.1524" layer="91"/>
 <wire x1="-124.46" y1="-20.32" x2="-129.54" y2="-25.4" width="0.1524" layer="91"/>
 <wire x1="-129.54" y1="-25.4" x2="-129.54" y2="-30.48" width="0.1524" layer="91"/>
-<pinref part="IC1" gate="A" pin="O"/>
-<pinref part="IC1" gate="B" pin="I0"/>
+<pinref part="4011" gate="A" pin="O"/>
+<pinref part="4011" gate="B" pin="I0"/>
 <wire x1="-129.54" y1="-30.48" x2="-124.46" y2="-30.48" width="0.1524" layer="91"/>
 <pinref part="Q1" gate="G$1" pin="G"/>
 <wire x1="-104.14" y1="-12.7" x2="-96.52" y2="-12.7" width="0.1524" layer="91"/>
@@ -12722,7 +12715,7 @@ W = angled&lt;p&gt;
 </net>
 <net name="+5V_SW_GND" class="3">
 <segment>
-<pinref part="RASPBERRYPI" gate="G$1" pin="6"/>
+<pinref part="RASPBERRY_PI_GPIO" gate="G$1" pin="6"/>
 <wire x1="0" y1="17.78" x2="-30.48" y2="17.78" width="0.1524" layer="91"/>
 <label x="-93.98" y="5.08" size="1.778" layer="95" rot="R90"/>
 <pinref part="Q1" gate="G$1" pin="D"/>
@@ -12757,7 +12750,7 @@ W = angled&lt;p&gt;
 </net>
 <net name="N$4" class="0">
 <segment>
-<pinref part="RASPBERRYPI" gate="G$1" pin="21"/>
+<pinref part="RASPBERRY_PI_GPIO" gate="G$1" pin="21"/>
 <wire x1="15.24" y1="38.1" x2="20.32" y2="38.1" width="0.1524" layer="91"/>
 <wire x1="20.32" y1="38.1" x2="20.32" y2="60.96" width="0.1524" layer="91"/>
 <wire x1="20.32" y1="60.96" x2="121.92" y2="60.96" width="0.1524" layer="91"/>
@@ -12768,7 +12761,7 @@ W = angled&lt;p&gt;
 </net>
 <net name="N$5" class="0">
 <segment>
-<pinref part="RASPBERRYPI" gate="G$1" pin="19"/>
+<pinref part="RASPBERRY_PI_GPIO" gate="G$1" pin="19"/>
 <pinref part="MCP3008" gate="A" pin="DIN"/>
 <wire x1="15.24" y1="35.56" x2="83.82" y2="35.56" width="0.1524" layer="91"/>
 </segment>
@@ -12781,7 +12774,7 @@ W = angled&lt;p&gt;
 <wire x1="53.34" y1="27.94" x2="53.34" y2="2.54" width="0.1524" layer="91"/>
 <wire x1="48.26" y1="27.94" x2="53.34" y2="27.94" width="0.1524" layer="91"/>
 <junction x="53.34" y="27.94"/>
-<pinref part="X6" gate="-2" pin="S"/>
+<pinref part="ADC" gate="-2" pin="S"/>
 </segment>
 </net>
 <net name="ANA_1" class="0">
@@ -12792,7 +12785,7 @@ W = angled&lt;p&gt;
 <pinref part="R9" gate="G$1" pin="1"/>
 <wire x1="48.26" y1="25.4" x2="55.88" y2="25.4" width="0.1524" layer="91"/>
 <junction x="55.88" y="25.4"/>
-<pinref part="X6" gate="-3" pin="S"/>
+<pinref part="ADC" gate="-3" pin="S"/>
 </segment>
 </net>
 <net name="VCC" class="2">
@@ -12800,16 +12793,16 @@ W = angled&lt;p&gt;
 <pinref part="+12V2" gate="G$1" pin="VCC"/>
 <wire x1="-228.6" y1="12.7" x2="-228.6" y2="10.16" width="0.1524" layer="91"/>
 <wire x1="-228.6" y1="10.16" x2="-220.98" y2="10.16" width="0.1524" layer="91"/>
-<pinref part="X2" gate="-1" pin="S"/>
+<pinref part="12V_IN" gate="-1" pin="S"/>
 <wire x1="-220.98" y1="10.16" x2="-213.36" y2="10.16" width="0.1524" layer="91"/>
 <wire x1="-213.36" y1="10.16" x2="-210.82" y2="10.16" width="0.1524" layer="91"/>
 <junction x="-213.36" y="10.16"/>
-<pinref part="X2" gate="-2" pin="S"/>
+<pinref part="12V_IN" gate="-2" pin="S"/>
 <wire x1="-210.82" y1="10.16" x2="-198.12" y2="10.16" width="0.1524" layer="91"/>
 <junction x="-210.82" y="10.16"/>
 <pinref part="U$1" gate="G$3" pin="P$1"/>
 <junction x="-220.98" y="10.16"/>
-<pinref part="IC1" gate="P" pin="VDD"/>
+<pinref part="4011" gate="P" pin="VDD"/>
 <wire x1="-198.12" y1="10.16" x2="-198.12" y2="-15.24" width="0.1524" layer="91"/>
 <junction x="-198.12" y="10.16"/>
 <pinref part="+12V1" gate="G$1" pin="VCC"/>
@@ -12832,7 +12825,7 @@ W = angled&lt;p&gt;
 <pinref part="MCP3008" gate="A" pin="CLK"/>
 <wire x1="83.82" y1="33.02" x2="25.4" y2="33.02" width="0.1524" layer="91"/>
 <wire x1="25.4" y1="33.02" x2="25.4" y2="40.64" width="0.1524" layer="91"/>
-<pinref part="RASPBERRYPI" gate="G$1" pin="23"/>
+<pinref part="RASPBERRY_PI_GPIO" gate="G$1" pin="23"/>
 <wire x1="25.4" y1="40.64" x2="15.24" y2="40.64" width="0.1524" layer="91"/>
 </segment>
 </net>
@@ -12843,8 +12836,8 @@ W = angled&lt;p&gt;
 <wire x1="-104.14" y1="-25.4" x2="-124.46" y2="-25.4" width="0.1524" layer="91"/>
 <wire x1="-124.46" y1="-25.4" x2="-129.54" y2="-20.32" width="0.1524" layer="91"/>
 <wire x1="-129.54" y1="-20.32" x2="-129.54" y2="-15.24" width="0.1524" layer="91"/>
-<pinref part="IC1" gate="B" pin="O"/>
-<pinref part="IC1" gate="A" pin="I1"/>
+<pinref part="4011" gate="B" pin="O"/>
+<pinref part="4011" gate="A" pin="I1"/>
 <wire x1="-129.54" y1="-15.24" x2="-124.46" y2="-15.24" width="0.1524" layer="91"/>
 </segment>
 </net>
@@ -12853,7 +12846,7 @@ W = angled&lt;p&gt;
 <pinref part="R4" gate="G$1" pin="2"/>
 <pinref part="T2" gate="G$1" pin="C"/>
 <wire x1="-142.24" y1="-33.02" x2="-142.24" y2="-35.56" width="0.1524" layer="91"/>
-<pinref part="IC1" gate="B" pin="I1"/>
+<pinref part="4011" gate="B" pin="I1"/>
 <wire x1="-142.24" y1="-35.56" x2="-142.24" y2="-38.1" width="0.1524" layer="91"/>
 <wire x1="-124.46" y1="-35.56" x2="-142.24" y2="-35.56" width="0.1524" layer="91"/>
 <junction x="-142.24" y="-35.56"/>
@@ -12868,7 +12861,7 @@ W = angled&lt;p&gt;
 </net>
 <net name="N$11" class="0">
 <segment>
-<pinref part="IC1" gate="A" pin="I0"/>
+<pinref part="4011" gate="A" pin="I0"/>
 <wire x1="-124.46" y1="-10.16" x2="-149.86" y2="-10.16" width="0.1524" layer="91"/>
 <pinref part="R3" gate="G$1" pin="2"/>
 <wire x1="-149.86" y1="-10.16" x2="-149.86" y2="-5.08" width="0.1524" layer="91"/>
@@ -12886,7 +12879,7 @@ W = angled&lt;p&gt;
 </net>
 <net name="N$13" class="0">
 <segment>
-<pinref part="RASPBERRYPI" gate="G$1" pin="24"/>
+<pinref part="RASPBERRY_PI_GPIO" gate="G$1" pin="24"/>
 <wire x1="0" y1="40.64" x2="-5.08" y2="40.64" width="0.1524" layer="91"/>
 <wire x1="-5.08" y1="40.64" x2="-5.08" y2="73.66" width="0.1524" layer="91"/>
 <wire x1="22.86" y1="73.66" x2="22.86" y2="38.1" width="0.1524" layer="91"/>
@@ -12900,7 +12893,7 @@ W = angled&lt;p&gt;
 <pinref part="MCP3008" gate="A" pin="CH2"/>
 <wire x1="83.82" y1="22.86" x2="58.42" y2="22.86" width="0.1524" layer="91"/>
 <wire x1="58.42" y1="22.86" x2="58.42" y2="2.54" width="0.1524" layer="91"/>
-<pinref part="X6" gate="-4" pin="S"/>
+<pinref part="ADC" gate="-4" pin="S"/>
 </segment>
 </net>
 <net name="N$7" class="0">
@@ -12908,7 +12901,7 @@ W = angled&lt;p&gt;
 <pinref part="MCP3008" gate="A" pin="CH3"/>
 <wire x1="83.82" y1="20.32" x2="60.96" y2="20.32" width="0.1524" layer="91"/>
 <wire x1="60.96" y1="20.32" x2="60.96" y2="2.54" width="0.1524" layer="91"/>
-<pinref part="X6" gate="-5" pin="S"/>
+<pinref part="ADC" gate="-5" pin="S"/>
 </segment>
 </net>
 <net name="N$8" class="0">
@@ -12916,7 +12909,7 @@ W = angled&lt;p&gt;
 <pinref part="MCP3008" gate="A" pin="CH4"/>
 <wire x1="83.82" y1="17.78" x2="63.5" y2="17.78" width="0.1524" layer="91"/>
 <wire x1="63.5" y1="17.78" x2="63.5" y2="2.54" width="0.1524" layer="91"/>
-<pinref part="X6" gate="-6" pin="S"/>
+<pinref part="ADC" gate="-6" pin="S"/>
 </segment>
 </net>
 <net name="N$10" class="0">
@@ -12924,7 +12917,7 @@ W = angled&lt;p&gt;
 <pinref part="MCP3008" gate="A" pin="CH5"/>
 <wire x1="83.82" y1="15.24" x2="66.04" y2="15.24" width="0.1524" layer="91"/>
 <wire x1="66.04" y1="15.24" x2="66.04" y2="2.54" width="0.1524" layer="91"/>
-<pinref part="X6" gate="-7" pin="S"/>
+<pinref part="ADC" gate="-7" pin="S"/>
 </segment>
 </net>
 <net name="N$14" class="0">
@@ -12932,7 +12925,7 @@ W = angled&lt;p&gt;
 <pinref part="MCP3008" gate="A" pin="CH6"/>
 <wire x1="83.82" y1="12.7" x2="68.58" y2="12.7" width="0.1524" layer="91"/>
 <wire x1="68.58" y1="12.7" x2="68.58" y2="2.54" width="0.1524" layer="91"/>
-<pinref part="X6" gate="-8" pin="S"/>
+<pinref part="ADC" gate="-8" pin="S"/>
 </segment>
 </net>
 <net name="N$15" class="0">
@@ -12940,14 +12933,14 @@ W = angled&lt;p&gt;
 <pinref part="MCP3008" gate="A" pin="CH7"/>
 <wire x1="83.82" y1="10.16" x2="71.12" y2="10.16" width="0.1524" layer="91"/>
 <wire x1="71.12" y1="10.16" x2="71.12" y2="2.54" width="0.1524" layer="91"/>
-<pinref part="X6" gate="-9" pin="S"/>
+<pinref part="ADC" gate="-9" pin="S"/>
 </segment>
 </net>
 <net name="N$16" class="0">
 <segment>
 <pinref part="R5" gate="G$1" pin="2"/>
 <wire x1="-114.3" y1="-43.18" x2="-99.06" y2="-43.18" width="0.1524" layer="91"/>
-<pinref part="RASPBERRYPI" gate="G$1" pin="16"/>
+<pinref part="RASPBERRY_PI_GPIO" gate="G$1" pin="16"/>
 <wire x1="0" y1="30.48" x2="-99.06" y2="30.48" width="0.1524" layer="91"/>
 <wire x1="-99.06" y1="30.48" x2="-99.06" y2="-43.18" width="0.1524" layer="91"/>
 </segment>
@@ -12975,7 +12968,7 @@ W = angled&lt;p&gt;
 <pinref part="R6" gate="G$1" pin="1"/>
 <wire x1="-71.12" y1="-12.7" x2="-60.96" y2="-12.7" width="0.1524" layer="91"/>
 <wire x1="-71.12" y1="-12.7" x2="-71.12" y2="50.8" width="0.1524" layer="91"/>
-<pinref part="RASPBERRYPI" gate="G$1" pin="32"/>
+<pinref part="RASPBERRY_PI_GPIO" gate="G$1" pin="32"/>
 <wire x1="-71.12" y1="50.8" x2="0" y2="50.8" width="0.1524" layer="91"/>
 </segment>
 </net>
@@ -12985,14 +12978,14 @@ W = angled&lt;p&gt;
 <errors>
 <approved hash="104,1,83.82,45.72,MCP3008,VDD,+3.3V,,,"/>
 <approved hash="104,1,83.82,43.18,MCP3008,VREF,+3.3V,,,"/>
-<approved hash="104,1,-198.12,-30.48,IC1P,VSS,GND,,,"/>
-<approved hash="104,1,-198.12,-15.24,IC1P,VDD,VCC,,,"/>
+<approved hash="104,1,-198.12,-30.48,4011P,VSS,GND,,,"/>
+<approved hash="104,1,-198.12,-15.24,4011P,VDD,VCC,,,"/>
 <approved hash="206,1,17.78,-38.1,GND,,,,,"/>
 <approved hash="206,1,27.94,-38.1,GND,,,,,"/>
 <approved hash="208,1,-177.8,-58.42,GND,sup,,,,"/>
 <approved hash="208,1,17.78,-38.1,GND,out,,,,"/>
 <approved hash="208,1,27.94,-38.1,GND,out,,,,"/>
-<approved hash="113,1,9.08871,38.2947,RASPBERRYPI,,,,,"/>
+<approved hash="113,1,13.6855,38.2947,RASPBERRY_PI_GPIO,,,,,"/>
 <approved hash="113,1,-136.533,-42.8837,T2,,,,,"/>
 <approved hash="113,1,-155.567,-22.5637,T1,,,,,"/>
 <approved hash="113,1,-46.3465,-12.4037,T3,,,,,"/>
