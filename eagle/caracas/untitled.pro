@@ -2,24 +2,24 @@ EAGLE AutoRouter Statistics:
 
 Job           : /home/kimt/eagle/caracas/untitled.brd
 
-Start at      : 22:15:20 (1/21/15)
-End at        : 22:15:20 (1/21/15)
-Elapsed time  : 00:00:00
+Start at      : 00:15:19 (4/6/15)
+End at        : 00:15:20 (4/6/15)
+Elapsed time  : 00:00:01
 
-Signals       :    19   RoutingGrid: 50 mil  Layers: 1
-Connections   :    48   predefined:  48 ( 0 Vias )
+Signals       :    29   RoutingGrid: 50 mil  Layers: 1
+Connections   :    67   predefined:  64 ( 0 Vias )
 
-Router memory :   8568
+Router memory :   6588
 
 Passname          :     Route Optimize1 Optimize2 Optimize3 Optimize4
 
-Time per pass     :  00:00:00  00:00:00  00:00:00  00:00:00  00:00:00
+Time per pass     :  00:00:00  00:00:01  00:00:00  00:00:00  00:00:00
 Number of Ripups  :         0         0         0         0         0
 max. Level        :         0         0         0         0         0
 max. Total        :         0         0         0         0         0
 
-Routed            :         0         0         0         0         0
+Routed            :         2         2         2         2         2
 Vias              :         0         0         0         0         0
-Resolution        :   100.0 %   100.0 %   100.0 %   100.0 %   100.0 %
+Resolution        :    98.5 %    98.5 %    98.5 %    98.5 %    98.5 %
 
-Final             : 100.0% finished
+Final             : 97.0% finished. Polygons may have fallen apart.
