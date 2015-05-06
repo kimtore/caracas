@@ -2,6 +2,7 @@
 
 import sys
 import zmq
+import threading
 import logging
 import subprocess
 
@@ -10,6 +11,8 @@ import mpd
 SOCK = "tcp://localhost:9090"
 
 button_mode = 'neutral'
+
+pending_shutdown = False
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s %(levelname)s %(message)s')
 logging.info("Setting up ZeroMQ socket...")
@@ -34,6 +37,12 @@ def run_dmc(cmd):
 def shutdown():
     logging.info("Shutting down the entire system!")
     run_dmc(['/sbin/init', '0'])
+
+def try_shutdown():
+    if pending_shutdown:
+        shutdown()
+        return True
+    return False
 
 def android_toggle_screen():
     logging.info("Toggling Android screen on/off")
@@ -103,8 +112,17 @@ def dispatch_neutral_rotary_press(params):
 def dispatch_mode_rotary_press(params):
     android_toggle_screen()
 
+def dispatch_neutral_power_on(params):
+    pending_shutdown = False
+
 def dispatch_neutral_power_off(params):
-    shutdown()
+    pending_shutdown = True
+    logging.info("Ignition power has been lost, shutting down in 15 seconds...")
+    timer = threading.Timer(2.0, try_shutdown)
+    timer.start()
+
+def dispatch_mode_power_on(params):
+    pending_shutdown = False
 
 def dispatch_mode_power_off(params):
     """
