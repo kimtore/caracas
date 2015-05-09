@@ -1,0 +1,30 @@
+Partlist Caracas Board v2.0
+
+Assembly variant: 
+
+Part              Value          Device             Package           Library          Sheet
+
++5VOUT            22-23-2021     22-23-2021         22-23-2021        con-molex        1
+12V_IN            22-23-2021     22-23-2021         22-23-2021        con-molex        1
+4011              4011N          4011N              DIL14             40xx             1
+ADC               22-23-2091     22-23-2091         22-23-2091        con-molex        1
+C1                0.1µ           CPOL-USE2,5-6E     E2,5-6E           rcl              1
+D1                1N4728         1N4728             DO41Z10           diode            1
+GND_1             22-23-2021     22-23-2021         22-23-2021        con-molex        1
+GND_2             22-23-2021     22-23-2021         22-23-2021        con-molex        1
+MCP3008           MCP3008-I/P    MCP3008-I/P        DIP254P762X432-16 mpc3008          1
+Q1                IRLZ44Z        IRLZ44Z            TO220BH           transistor-power 1
+R1                870            R-EU_0207/10       0207/10           rcl              1
+R2                1.2k           R-EU_0207/10       0207/10           rcl              1
+R3                10k            R-EU_0207/10       0207/10           rcl              1
+R4                10k            R-EU_0207/10       0207/10           rcl              1
+R5                260            R-EU_0207/10       0207/10           rcl              1
+R6                260            R-EU_0207/10       0207/10           rcl              1
+R7                115            R-EU_0207/10       0207/10           rcl              1
+R9                1k             R-EU_0207/10       0207/10           rcl              1
+R10               1k             R-EU_0207/10       0207/10           rcl              1
+RASPBERRY_PI_GPIO                MA20-2             MA20-2            con-lstb         1
+T1                               BC547-NPN-TO92-CBE TO92-CBE          transistor       1
+T2                               BC547-NPN-TO92-CBE TO92-CBE          transistor       1
+T3                               BC547-NPN-TO92-CBE TO92-CBE          transistor       1
+U$1               MKDS3          MKDS3              MKDS3             caracas          1
