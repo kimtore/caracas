@@ -7,22 +7,22 @@
 # Default-Start:     2 3 4 5
 # Default-Stop:      0
 # Short-Description: Enable the suicide pin
-# Description:
+# Description:       Do suicide
 ### END INIT INFO
 
 . /lib/lsb/init-functions
 
 do_start () {
     log_action_msg "Disabling the suicide pin"
-    /usr/local/bin/gpio mode 25 out
-    /usr/local/bin/gpio write 25 0
+    /usr/local/bin/gpio mode 4 out
+    /usr/local/bin/gpio write 4 0
 }
 
 do_stop () {
     log_action_msg "Enabling the suicide pin, goodbye cruel world"
     /bin/sync
-    /usr/local/bin/gpio mode 25 out
-    /usr/local/bin/gpio write 25 1
+    /usr/local/bin/gpio mode 4 out
+    /usr/local/bin/gpio write 4 1
 }
 
 case "$1" in
