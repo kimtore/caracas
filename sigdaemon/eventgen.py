@@ -1,6 +1,7 @@
 #!/usr/bin/env python2.7
+# coding: utf-8
 
-SOCK = "tcp://127.0.0.1:9090"
+SOCK = "tcp://0.0.0.0:9090"
 
 import curses
 import zmq
@@ -22,6 +23,7 @@ BUTTONS = [
     [False, curses.KEY_RIGHT,   'Right', 'Volume down', EVENT_ZEROMQ, 'VOLUME DOWN PRESS', 'VOLUME DOWN DEPRESS'],
     [False, curses.KEY_UP,      'Up', 'Arrow up',       EVENT_ZEROMQ, 'ARROW UP PRESS', 'ARROW UP DEPRESS'],
     [False, curses.KEY_DOWN,    'Down', 'Arrow down',   EVENT_ZEROMQ, 'ARROW DOWN PRESS', 'ARROW DOWN DEPRESS'],
+    [True, ord('p'),            'P', 'Power',           EVENT_ZEROMQ, 'POWER ON', 'POWER OFF'],
     [False, ord(' '),           'Spacebar', 'Mode',     EVENT_ZEROMQ, 'MODE PRESS', 'MODE DEPRESS'],
     [False, ord('q'),           'Q', 'Quit',            EVENT_QUIT, None, None],
 ]
@@ -30,16 +32,22 @@ socket = None
 
 
 def draw(stdscr):
+    y = 0
     x = 0
+    count = 0
     for arr in BUTTONS:
-        stdscr.addstr(0, x, arr[3])
+        if count > 0 and count % 5 == 0:
+            y += 8
+            x = 0
+        count += 1
+        stdscr.addstr(y, x, arr[3])
         if arr[6] == None:
-            stdscr.addstr(2, x, 'SINGLE', curses.color_pair(COLOR_SINGLE) | curses.A_BOLD)
+            stdscr.addstr(y + 2, x, 'SINGLE', curses.color_pair(COLOR_SINGLE) | curses.A_BOLD)
         elif arr[0]:
-            stdscr.addstr(2, x, ' ON  ', curses.color_pair(COLOR_ON) | curses.A_BOLD)
+            stdscr.addstr(y + 2, x, ' ON  ', curses.color_pair(COLOR_ON) | curses.A_BOLD)
         else:
-            stdscr.addstr(2, x, ' OFF ', curses.color_pair(COLOR_OFF) | curses.A_BOLD)
-        stdscr.addstr(4, x, 'Key: %s' % arr[2])
+            stdscr.addstr(y + 2, x, ' OFF ', curses.color_pair(COLOR_OFF) | curses.A_BOLD)
+        stdscr.addstr(y + 4, x, 'Key: %s' % arr[2])
         x = x + max(len(arr[2])+5, len(arr[3])) + 3
     stdscr.refresh()
 
@@ -71,7 +79,7 @@ def main(stdscr):
                     data = arr[5]
                 else:
                     data = arr[6]
-            socket.send(data)
+            socket.send_string(data)
 
 
 if __name__ == '__main__':
@@ -79,6 +87,6 @@ if __name__ == '__main__':
     logging.info("Setting up ZeroMQ socket...")
     context = zmq.Context()
     socket = context.socket(zmq.PUB)
-    socket.connect(SOCK)
+    socket.bind(SOCK)
     logging.info("Publishing events on %s" % SOCK)
     curses.wrapper(main)
