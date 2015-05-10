@@ -35,7 +35,7 @@ typedef unsigned short      uint16_t;
  * Power state, input.
  * This pin is HIGH when the ignition key is switched on.
  */
-#define PIN_POWER_STATE     4   /* BCM_GPIO pin 23, physical pin 16 */
+#define PIN_POWER_STATE     5   /* BCM_GPIO pin 24, physical pin 18 */
 
 /**
  * Max size of wiringPi pin numbering scheme
