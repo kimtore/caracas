@@ -448,8 +448,8 @@ int main(int argc, char **argv)
     zmq_publisher = zmq_socket(zmq_context, ZMQ_PUB);
     struct sigaction act;
 
-    if ((zmq_bind(zmq_publisher, "tcp://127.0.0.1:9090")) != 0) {
-        perror("Fatal error: could not bind ZMQ socket tcp://127.0.0.1:9090");
+    if ((zmq_bind(zmq_publisher, "tcp://0.0.0.0:9090")) != 0) {
+        perror("Fatal error: could not bind ZMQ socket tcp://0.0.0.0:9090");
         return EXIT_ZMQ;
     }
 
