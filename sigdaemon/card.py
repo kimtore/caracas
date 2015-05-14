@@ -2,14 +2,19 @@
 
 import sys
 import zmq
+import threading
 import logging
 import subprocess
 
 import mpd
 
 SOCK = "tcp://localhost:9090"
+SHUTDOWN_SECONDS = 15
+VOLUME_STEP = 1
 
 button_mode = 'neutral'
+
+pending_shutdown = False
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s %(levelname)s %(message)s')
 logging.info("Setting up ZeroMQ socket...")
@@ -34,6 +39,15 @@ def run_dmc(cmd):
 def shutdown():
     logging.info("Shutting down the entire system!")
     run_dmc(['/sbin/init', '0'])
+
+def try_shutdown():
+    logging.info("Checking whether system should be shut down...")
+    if pending_shutdown:
+        logging.info("Yes!")
+        shutdown()
+        return True
+    logging.info("No.")
+    return False
 
 def android_toggle_screen():
     logging.info("Toggling Android screen on/off")
@@ -86,13 +100,13 @@ def mpd_volume_shift(increment):
 #
 
 def dispatch_neutral_rotary_left(params):
-    mpd_volume_shift(-3)
+    mpd_volume_shift(-VOLUME_STEP)
 
 def dispatch_mode_rotary_left(params):
     mpd_prev()
 
 def dispatch_neutral_rotary_right(params):
-    mpd_volume_shift(3)
+    mpd_volume_shift(VOLUME_STEP)
 
 def dispatch_mode_rotary_right(params):
     mpd_next()
@@ -103,8 +117,20 @@ def dispatch_neutral_rotary_press(params):
 def dispatch_mode_rotary_press(params):
     android_toggle_screen()
 
+def dispatch_neutral_power_on(params):
+    global pending_shutdown
+    pending_shutdown = False
+
 def dispatch_neutral_power_off(params):
-    shutdown()
+    global pending_shutdown
+    pending_shutdown = True
+    logging.info("Ignition power has been lost, shutting down in %d seconds..." % SHUTDOWN_SECONDS)
+    timer = threading.Timer(SHUTDOWN_SECONDS, try_shutdown)
+    timer.start()
+
+def dispatch_mode_power_on(params):
+    global pending_shutdown
+    pending_shutdown = False
 
 def dispatch_mode_power_off(params):
     """
@@ -112,6 +138,14 @@ def dispatch_mode_power_off(params):
     hardware from being turned off at all.
     """
     logging.info("MODE key held down when turning off power, system is NOT shutting down.")
+
+def dispatch_neutral_mode_press(params):
+    global button_mode
+    button_mode = 'mode'
+
+def dispatch_mode_mode_depress(params):
+    global button_mode
+    button_mode = 'neutral'
 
 def get_dispatch_function(tokens):
     """

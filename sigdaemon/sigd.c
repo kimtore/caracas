@@ -35,7 +35,7 @@ typedef unsigned short      uint16_t;
  * Power state, input.
  * This pin is HIGH when the ignition key is switched on.
  */
-#define PIN_POWER_STATE     4   /* BCM_GPIO pin 23, physical pin 16 */
+#define PIN_POWER_STATE     5   /* BCM_GPIO pin 24, physical pin 18 */
 
 /**
  * Max size of wiringPi pin numbering scheme
@@ -448,8 +448,8 @@ int main(int argc, char **argv)
     zmq_publisher = zmq_socket(zmq_context, ZMQ_PUB);
     struct sigaction act;
 
-    if ((zmq_bind(zmq_publisher, "tcp://127.0.0.1:9090")) != 0) {
-        perror("Fatal error: could not bind ZMQ socket tcp://127.0.0.1:9090");
+    if ((zmq_bind(zmq_publisher, "tcp://0.0.0.0:9090")) != 0) {
+        perror("Fatal error: could not bind ZMQ socket tcp://0.0.0.0:9090");
         return EXIT_ZMQ;
     }
 

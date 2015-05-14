@@ -4,8 +4,8 @@
 # Required-Start:    $local_fs
 # Required-Stop:     $local_fs $network
 # Default-Start:     2 3 4 5
-# Default-Stop:      0
-# Short-Description: Example initscript
+# Default-Stop:      0 6
+# Short-Description: Android features
 # Description:       Start and stop the Android device
 ### END INIT INFO
 
