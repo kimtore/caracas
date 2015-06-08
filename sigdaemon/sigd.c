@@ -16,6 +16,8 @@
 #include <mcp3004.h>
 #include <zmq.h>
 
+#define DEBUG 0
+
 /*
  * Type definitions
  */
@@ -47,12 +49,28 @@ typedef unsigned short      uint16_t;
  */
 #define SPI_BASE            100
 #define SPI_CHAN            0
+#define SPI_PIN_MAX         2   /* How many pins to read, ranging from 1-8 */
+
+/**
+ * Interval between each read of the SPI controller
+ */
+#define SPI_INTERVAL        0.05
+
+/**
+ * ADC steering wheel values
+ */
+#define ANALOG_MODE         1
+#define ANALOG_UP           (1 << 1)
+#define ANALOG_DOWN         (1 << 2)
+#define ANALOG_VOL_UP       (1 << 3)
+#define ANALOG_VOL_DOWN     (1 << 4)
 
 /**
  * Exit codes
  */
 #define EXIT_ZMQ            1
 #define EXIT_WIRING         2
+#define EXIT_SPI            3
 
 /**
  * How long to run debouncing on the rotary click button
@@ -67,6 +85,11 @@ typedef unsigned short      uint16_t;
 #define EVENT_DEPRESS       2
 #define EVENT_LEFT          3
 #define EVENT_RIGHT         4
+
+/**
+ * ADC voltage lookup table
+ */
+uint8_t analog_table[SPI_PIN_MAX][1024];
 
 /**
  * Program options
@@ -207,7 +230,11 @@ static void init_pin_power_state()
  */
 static void init_adc()
 {
-    mcp3004Setup(SPI_BASE, SPI_CHAN);
+    /* 3004 and 3008 are the same, with 4/8 channels */
+    if (mcp3004Setup(SPI_BASE, SPI_CHAN) != 0) {
+        perror("Error initializing SPI using MCP3008 chip");
+        exit(EXIT_SPI);
+    }
 }
 
 /**
@@ -274,15 +301,6 @@ static uint8_t get_rotary_event(uint8_t pin_left, uint8_t pin_right)
     state_left_old = state_left;
 
     return event;
-}
-
-/**
- * Read from MCP3008.
- * FIXME
- */
-static uint8_t get_adc_event()
-{
-    analogRead(SPI_BASE + SPI_CHAN);
 }
 
 /**
@@ -440,6 +458,92 @@ void signal_handler(int s)
 }
 
 /**
+ * Initialize ADC lookup table
+ *
+ * Resistance between pins as follows:
+ *
+ * Function    Pin1    Pin2    Resistance      ADC value ref=3.33V divider=1k
+ * --------------------------------------------------------------------------
+ *             6       7       100.000 ohm     9    - 10
+ *             6       8       100.000 ohm     9    - 10
+ * Mode        6       8       1 ohm           1022 - 1023 (0 ohm)
+ * Up          6       7       1 ohm           1022 - 1023 (0 ohm)
+ * Down        6       7       330 ohm         768  - 769
+ * Vol+        6       7       1.000 ohm       508  - 509
+ * Vol-        6       7       3.100 ohm       249  - 250
+ *
+ */
+void init_analog_table()
+{
+    memset(&analog_table, 0, sizeof(analog_table));
+    analog_table[0][1022] = analog_table[0][1023] = ANALOG_MODE;
+    analog_table[1][1022] = analog_table[1][1023] = ANALOG_UP;
+    analog_table[1][768]  = analog_table[1][769]  = ANALOG_DOWN;
+    analog_table[1][508]  = analog_table[1][509]  = ANALOG_VOL_UP;
+    analog_table[1][249]  = analog_table[1][250]  = ANALOG_VOL_DOWN;
+}
+
+/**
+ * Process any changed events
+ */
+void handle_adc_events(uint8_t events, uint8_t last_events)
+{
+    uint8_t changed = events ^ last_events;
+    uint8_t event;
+    uint8_t state;
+
+#ifdef DEBUG
+    printf("handle_adc_events: events=%d, last_events=%d, changed=%d\n", events, last_events, changed);
+#endif
+
+    if (changed & ANALOG_MODE) {
+        event = event_from_state(!(events & ANALOG_MODE));
+        simple_zmq_send("ANALOG MODE", event_name(event));
+    }
+    if (changed & ANALOG_VOL_UP) {
+        event = event_from_state(!(events & ANALOG_VOL_UP));
+        simple_zmq_send("ANALOG VOLUME UP", event_name(event));
+    }
+    if (changed & ANALOG_VOL_DOWN) {
+        event = event_from_state(!(events & ANALOG_VOL_DOWN));
+        simple_zmq_send("ANALOG VOLUME DOWN", event_name(event));
+    }
+    if (changed & ANALOG_UP) {
+        event = event_from_state(!(events & ANALOG_UP));
+        simple_zmq_send("ANALOG UP", event_name(event));
+    }
+    if (changed & ANALOG_DOWN) {
+        event = event_from_state(!(events & ANALOG_DOWN));
+        simple_zmq_send("ANALOG DOWN", event_name(event));
+    }
+}
+
+/**
+ * Read from MCP3008.
+ */
+static uint8_t get_adc_event()
+{
+    static uint8_t last_events = 0;
+    uint8_t events = 0;
+    uint8_t pin;
+    uint16_t voltage;
+
+    for (pin = 0; pin < SPI_PIN_MAX; pin++) {
+        voltage = analogRead(SPI_BASE + SPI_CHAN + pin);
+#ifdef DEBUG
+        //printf("Voltage value from ADC channel %d pin %d: voltage=%d event=%d\n", SPI_CHAN, pin, voltage, analog_table[pin][voltage]);
+#endif
+        events |= analog_table[pin][voltage];
+    }
+
+    if (events != last_events) {
+        handle_adc_events(events, last_events);
+    }
+
+    last_events = events;
+}
+
+/**
  * Main program.
  */
 int main(int argc, char **argv)
@@ -460,6 +564,7 @@ int main(int argc, char **argv)
 
     init_pins();
     init_adc();
+    init_analog_table();
 
     act.sa_handler = signal_handler;
     act.sa_flags = 0;
@@ -471,7 +576,10 @@ int main(int argc, char **argv)
 
     printf("Caracas daemon started.\n");
 
-    sigsuspend(&act.sa_mask);
+    while (opts.running) {
+        get_adc_event();
+        usleep(1 / SPI_INTERVAL);
+    }
 
     printf("Received shutdown signal, exiting.\n");
 
