@@ -51,7 +51,7 @@ def try_shutdown():
 
 def android_toggle_screen():
     logging.info("Toggling Android screen on/off")
-    run_dmc(['/usr/local/bin/adb', 'shell', 'input', 'keyevent', '26'])
+    run_dmc(['curl', 'http://cardroid:8765'])
 
 def mpd_connect():
     mpd_client.timeout = 5
