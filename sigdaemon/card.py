@@ -13,6 +13,7 @@ SHUTDOWN_SECONDS = 15
 VOLUME_STEP = 1
 
 button_mode = 'neutral'
+mode_dispatched = True
 
 pending_shutdown = False
 
@@ -117,6 +118,18 @@ def dispatch_neutral_rotary_press(params):
 def dispatch_mode_rotary_press(params):
     android_toggle_screen()
 
+def dispatch_neutral_volume_down_press(params):
+    mpd_volume_shift(-VOLUME_STEP)
+
+def dispatch_neutral_volume_up_press(params):
+    mpd_volume_shift(VOLUME_STEP)
+
+def dispatch_neutral_arrow_up_press(params):
+    mpd_next()
+
+def dispatch_neutral_arrow_down_press(params):
+    mpd_prev()
+
 def dispatch_neutral_power_on(params):
     global pending_shutdown
     pending_shutdown = False
@@ -141,11 +154,15 @@ def dispatch_mode_power_off(params):
 
 def dispatch_neutral_mode_press(params):
     global button_mode
+    global mode_dispatched
     button_mode = 'mode'
+    mode_dispatched = False
 
 def dispatch_mode_mode_depress(params):
     global button_mode
     button_mode = 'neutral'
+    if not mode_dispatched:
+        android_toggle_screen()
 
 def get_dispatch_function(tokens):
     """
@@ -177,6 +194,8 @@ if __name__ == '__main__':
                 if callable(func):
                     logging.debug("Dispatching to '%s'" % str(func.__name__))
                     func([])
+                    if tokens[0] != 'MODE':
+                        mode_dispatched = True
                 else:
                     logging.warn("No dispatcher found for this event")
             except Exception, e:

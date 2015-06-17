@@ -498,23 +498,23 @@ void handle_adc_events(uint8_t events, uint8_t last_events)
 
     if (changed & ANALOG_MODE) {
         event = event_from_state(!(events & ANALOG_MODE));
-        simple_zmq_send("ANALOG MODE", event_name(event));
+        simple_zmq_send("MODE", event_name(event));
     }
     if (changed & ANALOG_VOL_UP) {
         event = event_from_state(!(events & ANALOG_VOL_UP));
-        simple_zmq_send("ANALOG VOLUME UP", event_name(event));
+        simple_zmq_send("VOLUME UP", event_name(event));
     }
     if (changed & ANALOG_VOL_DOWN) {
         event = event_from_state(!(events & ANALOG_VOL_DOWN));
-        simple_zmq_send("ANALOG VOLUME DOWN", event_name(event));
+        simple_zmq_send("VOLUME DOWN", event_name(event));
     }
     if (changed & ANALOG_UP) {
         event = event_from_state(!(events & ANALOG_UP));
-        simple_zmq_send("ANALOG UP", event_name(event));
+        simple_zmq_send("ARROW UP", event_name(event));
     }
     if (changed & ANALOG_DOWN) {
         event = event_from_state(!(events & ANALOG_DOWN));
-        simple_zmq_send("ANALOG DOWN", event_name(event));
+        simple_zmq_send("ARROW DOWN", event_name(event));
     }
 }
 
