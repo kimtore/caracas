@@ -1,17 +1,3 @@
-22:56:34 <    jonnor> uansett, du bruker en spenningsdeler
-22:57:05 <    jonnor> PS: RPi I/O kj�rer p� 3.3v, ikke dytt 5V p� der
-22:57:09 <    jonnor> da d�r de fort
-22:59:35 <    jonnor> en komparator lager du for�vrig enkelt med en opamp
-23:01:09 < ambientso> i null-posisjon er resistansen for øvrig 100000 ohm.
-23:01:16 < ambientso> dersom det skulle ha noe å si.
-23:10:59 <    jonnor> ikke s� mye :)
-23:12:05 <    jonnor> er egentlig litt uelegant med komparatorer n�r man har en RPi... men det er en ganske rett-frem l�sning ihvertfall
-23:12:42 <    jonnor> m� du kj�pe inn ting s� er nok en ADC enklest
-23:12:56 <    jonnor> for da kj�r du bare terskel-logikken i software
-23:14:48 <  mastensg> Jeg brukte MCP3008 eller en lignende med min Pi en gang. Jeg tror kanskje det ligger noen av dem p� Bitraf.
-
-
-
 DIN dimensions:
 
     Width   177 mm
@@ -51,19 +37,4 @@ Steering wheel connection:
     Pin 7   0V      Green
     Pin 8   0V      Red
 
-Base resistance between pins:
-
-            Pin1    Pin2    Resistance
---------------------------------------
-
-Resistance between pins as follows:
-
-Function    Pin1    Pin2    Resistance      ADC value ref=3.33V divider=1k
---------------------------------------------------------------------------
-            6       7       100.000 ohm     9    - 10
-            6       8       100.000 ohm     9    - 10
-Mode        6       8       1 ohm           1022 - 1023 (0 ohm)
-Up          6       7       1 ohm           1022 - 1023 (0 ohm)
-Down        6       7       330 ohm         768  - 769
-Vol+        6       7       1.000 ohm       508  - 509
-Vol-        6       7       3.100 ohm       249  - 250
+Pins are documented in sigd.c.

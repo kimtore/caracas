@@ -173,9 +173,8 @@ static uint8_t pin_active(uint8_t pin)
         case PIN_ROTARY_CLICK:
         case PIN_ROTARY_LEFT:
         case PIN_ROTARY_RIGHT:
-            return (get_pin_state(pin) == LOW);
         case PIN_POWER_STATE:
-            return (get_pin_state(pin) == HIGH);
+            return (get_pin_state(pin) == LOW);
         default:
             assert(0);
     }
@@ -220,9 +219,9 @@ static void init_pin_rotary_right()
 static void init_pin_power_state()
 {
     pinMode(PIN_POWER_STATE, INPUT);
-    pullUpDnControl(PIN_POWER_STATE, PUD_DOWN);
+    pullUpDnControl(PIN_POWER_STATE, PUD_UP);
     wiringPiISR(PIN_POWER_STATE, INT_EDGE_BOTH, callback_power_state);
-    set_pin_state(PIN_POWER_STATE, LOW);
+    set_pin_state(PIN_POWER_STATE, HIGH);
 }
 
 /**
@@ -466,21 +465,38 @@ void signal_handler(int s)
  * --------------------------------------------------------------------------
  *             6       7       100.000 ohm     9    - 10
  *             6       8       100.000 ohm     9    - 10
- * Mode        6       8       1 ohm           1022 - 1023 (0 ohm)
- * Up          6       7       1 ohm           1022 - 1023 (0 ohm)
- * Down        6       7       330 ohm         768  - 769
- * Vol+        6       7       1.000 ohm       508  - 509
- * Vol-        6       7       3.100 ohm       249  - 250
+ * Mode        6       8       1 ohm           1014 - 1023 (0 ohm)
+ * Up          6       7       1 ohm           1014 - 1023 (0 ohm)
+ * Down        6       7       330 ohm         764  - 769
+ * Vol+        6       7       1.000 ohm       503  - 511
+ * Vol-        6       7       3.100 ohm       243  - 250
  *
  */
 void init_analog_table()
 {
+    uint16_t i;
+
     memset(&analog_table, 0, sizeof(analog_table));
-    analog_table[0][1022] = analog_table[0][1023] = ANALOG_MODE;
-    analog_table[1][1022] = analog_table[1][1023] = ANALOG_UP;
-    analog_table[1][768]  = analog_table[1][769]  = ANALOG_DOWN;
-    analog_table[1][508]  = analog_table[1][509]  = ANALOG_VOL_UP;
-    analog_table[1][249]  = analog_table[1][250]  = ANALOG_VOL_DOWN;
+
+    for (i = 1014; i <= 1023; i++) {
+        analog_table[0][i] = ANALOG_MODE;
+    }
+
+    for (i = 1014; i <= 1023; i++) {
+        analog_table[1][i] = ANALOG_UP;
+    }
+
+    for (i = 764; i <= 769; i++) {
+        analog_table[1][i] = ANALOG_DOWN;
+    }
+
+    for (i = 503; i <= 511; i++) {
+        analog_table[1][i] = ANALOG_VOL_UP;
+    }
+
+    for (i = 243; i <= 250; i++) {
+        analog_table[1][i] = ANALOG_VOL_DOWN;
+    }
 }
 
 /**
