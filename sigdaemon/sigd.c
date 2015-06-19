@@ -52,9 +52,9 @@ typedef unsigned short      uint16_t;
 #define SPI_PIN_MAX         2   /* How many pins to read, ranging from 1-8 */
 
 /**
- * Interval between each read of the SPI controller
+ * Microseconds interval between each read of the SPI controller
  */
-#define SPI_INTERVAL        0.05
+#define SPI_INTERVAL        50000
 
 /**
  * ADC steering wheel values
@@ -479,23 +479,23 @@ void init_analog_table()
     memset(&analog_table, 0, sizeof(analog_table));
 
     for (i = 1014; i <= 1023; i++) {
-        analog_table[0][i] = ANALOG_MODE;
+        analog_table[1][i] = ANALOG_MODE;
     }
 
     for (i = 1014; i <= 1023; i++) {
-        analog_table[1][i] = ANALOG_UP;
+        analog_table[0][i] = ANALOG_UP;
     }
 
     for (i = 764; i <= 769; i++) {
-        analog_table[1][i] = ANALOG_DOWN;
+        analog_table[0][i] = ANALOG_DOWN;
     }
 
     for (i = 503; i <= 511; i++) {
-        analog_table[1][i] = ANALOG_VOL_UP;
+        analog_table[0][i] = ANALOG_VOL_UP;
     }
 
     for (i = 243; i <= 250; i++) {
-        analog_table[1][i] = ANALOG_VOL_DOWN;
+        analog_table[0][i] = ANALOG_VOL_DOWN;
     }
 }
 
@@ -547,7 +547,7 @@ static uint8_t get_adc_event()
     for (pin = 0; pin < SPI_PIN_MAX; pin++) {
         voltage = analogRead(SPI_BASE + SPI_CHAN + pin);
 #ifdef DEBUG
-        //printf("Voltage value from ADC channel %d pin %d: voltage=%d event=%d\n", SPI_CHAN, pin, voltage, analog_table[pin][voltage]);
+        printf("Voltage value from ADC channel %d pin %d: voltage=%d event=%d\n", SPI_CHAN, pin, voltage, analog_table[pin][voltage]);
 #endif
         events |= analog_table[pin][voltage];
     }
@@ -594,7 +594,7 @@ int main(int argc, char **argv)
 
     while (opts.running) {
         get_adc_event();
-        usleep(1 / SPI_INTERVAL);
+        usleep(SPI_INTERVAL);
     }
 
     printf("Received shutdown signal, exiting.\n");

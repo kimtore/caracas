@@ -9,8 +9,8 @@ import subprocess
 import mpd
 
 SOCK = "tcp://localhost:9090"
-SHUTDOWN_SECONDS = 15
-VOLUME_STEP = 1
+SHUTDOWN_SECONDS = 3
+VOLUME_STEP = 2
 
 button_mode = 'neutral'
 mode_dispatched = True
