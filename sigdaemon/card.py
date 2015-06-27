@@ -38,7 +38,6 @@ class System(object):
     """
     def run(self, cmd):
         logging.info("Running shell command: %s" % ' '.join(cmd))
-        return 0, None, None
         process = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         stdout, stderr = process.communicate()
         exit_code = process.returncode
