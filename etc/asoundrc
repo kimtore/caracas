@@ -1,0 +1,17 @@
+# vi: se ft=alsaconf:
+
+ctl.equal {
+    type equal;
+    controls "/var/lib/alsa/eq.state";
+}
+
+pcm.plugequal {
+    type equal;
+    slave.pcm "plughw:CARD=DAC";
+    controls "/var/lib/alsa/eq.state";
+}
+
+pcm.equal {
+    type plug;
+    slave.pcm plugequal;
+}
