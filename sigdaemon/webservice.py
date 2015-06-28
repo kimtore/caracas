@@ -37,7 +37,7 @@ class BatteryResource(object):
             if state == '1':
                 msg = 'BATTERY FULL'
             elif state == '0':
-                msg = 'BATTERY DISCHARGING'
+                msg = 'BATTERY CHARGING'
             else:
                 raise Exception('Required parameter "state" invalid\n')
         except Exception, e:

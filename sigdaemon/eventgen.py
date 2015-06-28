@@ -25,6 +25,7 @@ BUTTONS = [
     [False, curses.KEY_DOWN,    'Down', 'Arrow down',   EVENT_ZEROMQ, 'ARROW DOWN PRESS', 'ARROW DOWN DEPRESS'],
     [True, ord('p'),            'P', 'Power',           EVENT_ZEROMQ, 'POWER ON', 'POWER OFF'],
     [False, ord(' '),           'Spacebar', 'Mode',     EVENT_ZEROMQ, 'MODE PRESS', 'MODE DEPRESS'],
+    [True, ord('b'),            'B', 'Battery',         EVENT_ZEROMQ, 'BATTERY FULL', 'BATTERY CHARGING'],
     [False, ord('q'),           'Q', 'Quit',            EVENT_QUIT, None, None],
 ]
 

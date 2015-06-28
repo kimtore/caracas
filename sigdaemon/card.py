@@ -9,6 +9,10 @@ import datetime
 import mpd
 
 
+# Battery state constants
+BATTERY_CHARGING = 0
+BATTERY_FULL = 1
+
 # ZeroMQ publisher socket
 SOCK = "tcp://localhost:9090"
 
@@ -118,6 +122,7 @@ class Dispatcher(object):
     def __init__(self, system, mpd):
         self.system = system
         self.mpd = mpd
+        self.battery_state = BATTERY_FULL  # assume Android battery full at boot
         self.power = True  # assume power on at boot
         self.power_on_time = None
         self.set_power_on_time()
@@ -129,8 +134,15 @@ class Dispatcher(object):
         self.power_on_time = datetime.datetime.now()
         self.is_shutting_down = False
 
-    def needs_shutdown(self):
+    def can_shutdown(self):
         if self.power or self.is_shutting_down:
+            return False
+        if self.battery_state == BATTERY_CHARGING:
+            return False
+        return True
+
+    def needs_shutdown(self):
+        if not self.can_shutdown():
             return False
         delta = datetime.datetime.now() - self.power_on_time
         return delta.total_seconds() > SHUTDOWN_SECONDS
@@ -138,6 +150,24 @@ class Dispatcher(object):
     def shutdown(self):
         self.is_shutting_down = True
         self.system.shutdown()
+
+
+    #
+    # Battery events
+    #
+    def neutral_battery_charging(self):
+        self.battery_state = BATTERY_CHARGING
+        logging.info('Android battery is charging. Shutdown will be deferred until battery is charged.')
+
+    def neutral_battery_full(self):
+        self.battery_state = BATTERY_FULL
+        logging.info('Android battery is full. Shutdown is enabled.')
+
+    def mode_battery_charging(self):
+        return self.neutral_battery_charging()
+
+    def mode_battery_full(self):
+        return self.neutral_battery_full()
 
     #
     # Rotary events
@@ -186,9 +216,13 @@ class Dispatcher(object):
         self.set_power_on_time()
 
     def neutral_power_off(self):
-        logging.info("Ignition power has been lost, shutting down in %d seconds unless power is restored..." % SHUTDOWN_SECONDS)
+        logging.info("Ignition power has been lost!")
         self.power = False
         self.set_power_on_time()
+        if self.can_shutdown():
+            logging.info("Shutting down in %d seconds unless power is restored..." % SHUTDOWN_SECONDS)
+        else:
+            logging.info("Will not shutdown, due to internal state.")
 
     def mode_power_on(self):
         return self.neutral_power_on()
