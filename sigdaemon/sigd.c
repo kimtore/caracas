@@ -15,6 +15,7 @@
 #include <wiringPi.h>
 #include <mcp3004.h>
 #include <zmq.h>
+#include <syslog.h>
 
 #define DEBUG 0
 
@@ -308,7 +309,7 @@ static uint8_t get_rotary_event(uint8_t pin_left, uint8_t pin_right)
 static int log_zmq_send(void *socket, const char *str)
 {
 #if DEBUG
-    printf("PUB: %s\n", str);
+    syslog("PUB: %s\n", str);
 #endif
     return zmq_send(socket, str, strlen(str), 0);
 }
@@ -323,7 +324,7 @@ void simple_zmq_send(const char *source, const char *state)
     sprintf(msg, "%s %s", source, state);
 
     if (log_zmq_send(zmq_publisher, msg) == -1) {
-        perror("Error when publishing ZeroMQ message");
+        perror("Error when publishing ZeroMQ event");
     }
 }
 
@@ -334,7 +335,7 @@ uint8_t debounce(uint16_t *state, uint8_t pin)
 {
     *state = (*state << 1) | digitalRead(pin);
 #if DEBUG
-    printf("debounce %d %x\n", pin, *state);
+    syslog(LOG_MAKEPRI(LOG_DAEMON, LOG_DEBUG), "debounce %d %x\n", pin, *state);
 #endif
     return (*state == 0xffff || *state == 0x0000);
 }
@@ -393,13 +394,13 @@ void callback_rotary_click()
     
     result = read_debounced(PIN_ROTARY_CLICK);
     if (result == -1) {
-        printf("Encountered some noise on rotary click pin\n");
+        syslog(LOG_MAKEPRI(LOG_DAEMON, LOG_DEBUG), "Encountered some noise on rotary click pin\n");
         return;
     }
 
     event = get_pin_event(PIN_ROTARY_CLICK);
     if (event == EVENT_NONE) {
-        printf("Wrong event on rotary click pin, unexpected %s\n", event_name(event));
+        syslog(LOG_MAKEPRI(LOG_DAEMON, LOG_DEBUG), "Wrong event on rotary click pin, unexpected %s\n", event_name(event));
         return;
     }
 
@@ -418,13 +419,13 @@ void callback_power_state()
     
     result = read_debounced(PIN_POWER_STATE);
     if (result == -1) {
-        printf("Encountered some noise on power pin\n");
+        syslog(LOG_MAKEPRI(LOG_DAEMON, LOG_DEBUG), "Encountered some noise on power pin\n");
         return;
     }
 
     event = get_pin_event(PIN_POWER_STATE);
     if (event == EVENT_NONE) {
-        printf("Wrong event on power pin, unexpected %s\n", event_name(event));
+        syslog(LOG_MAKEPRI(LOG_DAEMON, LOG_DEBUG), "Wrong event on power pin, unexpected %s\n", event_name(event));
         return;
     }
 
@@ -447,7 +448,7 @@ static void clear_opts(struct opts_t *o)
  */
 void signal_handler(int s)
 {
-    printf("Caught signal %d\n", s);
+    syslog(LOG_MAKEPRI(LOG_DAEMON, LOG_NOTICE), "Caught signal %d\n", s);
     opts.running = 0;
 }
 
@@ -504,7 +505,7 @@ void handle_adc_events(uint8_t events, uint8_t last_events)
     uint8_t state;
 
 #if DEBUG
-    printf("handle_adc_events: events=%d, last_events=%d, changed=%d\n", events, last_events, changed);
+    syslog(LOG_MAKEPRI(LOG_DAEMON, LOG_DEBUG), "handle_adc_events: events=%d, last_events=%d, changed=%d\n", events, last_events, changed);
 #endif
 
     if (changed & ANALOG_MODE) {
@@ -542,7 +543,7 @@ static uint8_t get_adc_event()
     for (pin = 0; pin < SPI_PIN_MAX; pin++) {
         voltage = analogRead(SPI_BASE + SPI_CHAN + pin);
 #if DEBUG
-        printf("Voltage value from ADC channel %d pin %d: voltage=%d event=%d\n", SPI_CHAN, pin, voltage, analog_table[pin][voltage]);
+        syslog(LOG_MAKEPRI(LOG_DAEMON, LOG_DEBUG), "Voltage value from ADC channel %d pin %d: voltage=%d event=%d\n", SPI_CHAN, pin, voltage, analog_table[pin][voltage]);
 #endif
         events |= analog_table[pin][voltage];
     }
@@ -573,6 +574,8 @@ int main(int argc, char **argv)
         return EXIT_WIRING;
     }
 
+    openlog("sigd", LOG_PID, LOG_DAEMON);
+
     init_pins();
     init_adc();
     init_analog_table();
@@ -585,14 +588,14 @@ int main(int argc, char **argv)
 
     clear_opts(&opts);
 
-    printf("Caracas daemon started.\n");
+    syslog(LOG_MAKEPRI(LOG_DAEMON, LOG_NOTICE), "Caracas daemon started.\n");
 
     while (opts.running) {
         get_adc_event();
         usleep(SPI_INTERVAL);
     }
 
-    printf("Received shutdown signal, exiting.\n");
+    syslog(LOG_MAKEPRI(LOG_DAEMON, LOG_NOTICE), "Received shutdown signal, exiting.\n");
 
     zmq_close(zmq_publisher);
     zmq_term(zmq_context);

@@ -3,7 +3,7 @@
 import sys
 import zmq
 import argparse
-import logging
+import syslog
 import subprocess
 import datetime
 import mpd
@@ -41,27 +41,27 @@ class System(object):
     Trigger system events such as run, shutdown, etc.
     """
     def run(self, cmd):
-        logging.info("Running shell command: %s" % ' '.join(cmd))
+        syslog.syslog("Running shell command: %s" % ' '.join(cmd))
         process = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         stdout, stderr = process.communicate()
         exit_code = process.returncode
         return exit_code, stderr, stdout
 
     def shutdown(self):
-        logging.info("Shutting down the entire system!")
+        syslog.syslog("Shutting down the entire system!")
         self.run(['/sbin/init', '0'])
 
     def try_shutdown(self):
-        logging.info("Checking whether system should be shut down...")
+        syslog.syslog("Checking whether system should be shut down...")
         if pending_shutdown:
-            logging.info("Yes!")
+            syslog.syslog("Yes!")
             shutdown()
             return True
-        logging.info("No.")
+        syslog.syslog("No.")
         return False
 
     def android_toggle_screen(self):
-        logging.info("Toggling Android screen on/off")
+        syslog.syslog("Toggling Android screen on/off")
         self.run(['/usr/local/bin/adb', 'shell', 'input', 'keyevent', '26'])
 
 
@@ -87,21 +87,21 @@ class MPD(object):
 
     def prev(self):
         status = self.get_status()
-        logging.info("Switching to previous song")
+        syslog.syslog("Switching to previous song")
         self.mpd_client.previous()
 
     def next(self):
         status = self.get_status()
-        logging.info("Switching to next song")
+        syslog.syslog("Switching to next song")
         self.mpd_client.next()
 
     def play_or_pause(self):
         status = self.get_status()
         if status['state'] == 'stop':
-            logging.info("Starting to play music")
+            syslog.syslog("Starting to play music")
             self.mpd_client.play()
         else:
-            logging.info("Toggling play/pause state")
+            syslog.syslog("Toggling play/pause state")
             self.mpd_client.pause()
 
     def volume_shift(self, increment):
@@ -111,7 +111,7 @@ class MPD(object):
             shifted = 100
         if shifted < 0:
             shifted = 0
-        logging.info("Setting volume to %d" % shifted)
+        syslog.syslog("Setting volume to %d" % shifted)
         self.mpd_client.setvol(shifted)
 
 
@@ -157,11 +157,11 @@ class Dispatcher(object):
     #
     def neutral_battery_charging(self):
         self.battery_state = BATTERY_CHARGING
-        logging.info('Android battery is charging. Shutdown will be deferred until battery is charged.')
+        syslog.syslog('Android battery is charging. Shutdown will be deferred until battery is charged.')
 
     def neutral_battery_full(self):
         self.battery_state = BATTERY_FULL
-        logging.info('Android battery is full. Shutdown is enabled.')
+        syslog.syslog('Android battery is full. Shutdown is enabled.')
 
     def mode_battery_charging(self):
         return self.neutral_battery_charging()
@@ -211,18 +211,18 @@ class Dispatcher(object):
     # Ignition power events
     #
     def neutral_power_on(self):
-        logging.info("Ignition power has been restored, system will remain active.")
+        syslog.syslog("Ignition power has been restored, system will remain active.")
         self.power = True
         self.set_power_on_time()
 
     def neutral_power_off(self):
-        logging.info("Ignition power has been lost!")
+        syslog.syslog("Ignition power has been lost!")
         self.power = False
         self.set_power_on_time()
         if self.can_shutdown():
-            logging.info("Shutting down in %d seconds unless power is restored..." % SHUTDOWN_SECONDS)
+            syslog.syslog("Shutting down in %d seconds unless power is restored..." % SHUTDOWN_SECONDS)
         else:
-            logging.info("Will not shutdown, due to internal state.")
+            syslog.syslog("Will not shutdown, due to internal state.")
 
     def mode_power_on(self):
         return self.neutral_power_on()
@@ -232,7 +232,7 @@ class Dispatcher(object):
         Shutting down the power when the MODE key is held down prevents the
         hardware from being turned off at all.
         """
-        logging.info("MODE key held down when turning off power, system is NOT shutting down.")
+        syslog.syslog("MODE key held down when turning off power, system is NOT shutting down.")
         self.power = True
         self.set_power_on_time()
 
@@ -253,13 +253,13 @@ class Dispatcher(object):
 
         set_dispatched = (self.button_mode == 'mode' and args[0] != 'mode')
         if callable(func):
-            logging.debug("Dispatching to '%s'" % str(func.__name__))
+            syslog.syslog(syslog.LOG_DEBUG, "Dispatching to '%s'" % str(func.__name__))
             ret = func()
         else:
-            logging.warn("No dispatcher found for this event")
+            syslog.syslog(syslog.LOG_WARN, "No dispatcher found for this event")
 
         self.mode_dispatched = set_dispatched
-        logging.debug("Setting mode_dispatched variable to %s" % set_dispatched)
+        syslog.syslog(syslog.LOG_DEBUG, "Setting mode_dispatched variable to %s" % set_dispatched)
 
         return ret
 
@@ -270,7 +270,7 @@ class Dispatcher(object):
         pattern = "%s_%s"
         base_name = '_'.join(args)
         func_name = pattern % (self.button_mode, base_name)
-        logging.debug("Looking for function name 'Dispatcher.%s'" % func_name)
+        syslog.syslog(syslog.LOG_DEBUG, "Looking for function name 'Dispatcher.%s'" % func_name)
         func = getattr(self, func_name, None)
         return func
 
@@ -284,18 +284,18 @@ class Card(object):
         self.repeat_func = None
 
     def setup_zeromq(self):
-        logging.info("Setting up ZeroMQ socket...")
+        syslog.syslog("Setting up ZeroMQ socket...")
         self.context = zmq.Context()
         self.socket = self.context.socket(zmq.SUB)
         self.socket.connect(SOCK)
         self.socket.setsockopt_string(zmq.SUBSCRIBE, u'')
         self.poller = zmq.Poller()
         self.poller.register(self.socket, zmq.POLLIN)
-        logging.info("Listening for events from signal daemon on %s" % SOCK)
+        syslog.syslog("Listening for events from signal daemon on %s" % SOCK)
 
     def process_zeromq_message(self):
         string = self.socket.recv_string()
-        logging.info("Received event '%s'" % string)
+        syslog.syslog("Received event: %s" % string)
         tokens = string.strip().lower().split()
         self.repeat_func = self.dispatcher.dispatch(*tokens)
 
@@ -303,7 +303,7 @@ class Card(object):
         if self.dispatcher.needs_shutdown():
             self.dispatcher.shutdown()
         if callable(self.repeat_func):
-            logging.info("Repeating last dispatched function")
+            syslog.syslog("Repeating last dispatched function")
             self.repeat_func()
 
     def run(self):
@@ -320,9 +320,10 @@ if __name__ == '__main__':
     parser.add_argument('--debug', help='Enable debug output', action='store_true')
     args = parser.parse_args()
 
-    loglevel = logging.DEBUG if args.debug else logging.INFO
+    syslog.openlog('card', syslog.LOG_PID, syslog.LOG_DAEMON)
 
-    logging.basicConfig(level=loglevel, format='%(asctime)s %(levelname)s %(message)s')
+    if not args.debug:
+        syslog.setlogmask(syslog.LOG_UPTO(syslog.LOG_INFO))
 
     mpdclient = mpd.MPDClient()
     mpd_ = MPD(mpdclient)
@@ -336,4 +337,4 @@ if __name__ == '__main__':
         card.run()
 
     except KeyboardInterrupt:
-        pass
+        syslog.syslog(syslog.LOG_NOTICE, "Exiting program.")

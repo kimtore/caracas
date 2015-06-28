@@ -9,7 +9,7 @@
 
 import falcon
 import zmq
-import logging
+import syslog
 
 
 # ZeroMQ XSUB socket
@@ -21,9 +21,10 @@ class ZeroMQ(object):
         self.context = zmq.Context()
         self.socket = self.context.socket(zmq.PUB)
         self.socket.connect(SOCK)
-        logging.info("Publishing events to %s" % SOCK)
+        syslog.syslog("Publishing ZeroMQ events to %s" % SOCK)
 
     def send(self, msg):
+        syslog.syslog("Publishing event: %s" % msg)
         return self.socket.send_string(msg)
 
 
@@ -32,6 +33,7 @@ class BatteryResource(object):
         self.zeromq = zeromq
 
     def on_get(self, req, resp):
+        syslog.syslog("Received request from %s: %s" % (req.env['REMOTE_ADDR'], req.uri))
         try:
             lev = int(req.get_param('level'))
             if lev == 100:
@@ -52,6 +54,10 @@ class BatteryResource(object):
             resp.body = 'Unexpected exception: %s\n' % unicode(e)
 
 
+# Open syslog
+syslog.openlog('webservice', syslog.LOG_PID, syslog.LOG_DAEMON)
+syslog.syslog('HTTP REST API is starting.')
+
 # start ZeroMQ socket
 zeromq = ZeroMQ()
 
@@ -59,3 +65,4 @@ zeromq = ZeroMQ()
 application = falcon.API()
 battery = BatteryResource(zeromq)
 application.add_route('/battery', battery)
+syslog.syslog('Ready to receive requests.')

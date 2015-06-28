@@ -5,7 +5,7 @@ SOCK = "tcp://localhost:9080"
 
 import curses
 import zmq
-import logging
+import syslog
 
 EVENT_ZEROMQ = 0
 EVENT_FUNCTION = 1
@@ -80,14 +80,15 @@ def main(stdscr):
                     data = arr[5]
                 else:
                     data = arr[6]
+            syslog.syslog("Submitting event: %s" % data)
             socket.send_string(data)
 
 
 if __name__ == '__main__':
-    logging.basicConfig(level=logging.INFO, format='%(asctime)s %(levelname)s %(message)s')
-    logging.info("Setting up ZeroMQ socket...")
+    syslog.openlog('eventgen', syslog.LOG_PID, syslog.LOG_DAEMON)
+    syslog.syslog("Setting up ZeroMQ socket...")
     context = zmq.Context()
     socket = context.socket(zmq.PUB)
     socket.connect(SOCK)
-    logging.info("Publishing events to %s" % SOCK)
+    syslog.syslog("Publishing events to %s" % SOCK)
     curses.wrapper(main)
