@@ -1,7 +1,7 @@
 #!/usr/bin/env python2.7
 # coding: utf-8
 
-SOCK = "tcp://0.0.0.0:9090"
+SOCK = "tcp://localhost:9080"
 
 import curses
 import zmq
@@ -87,6 +87,6 @@ if __name__ == '__main__':
     logging.info("Setting up ZeroMQ socket...")
     context = zmq.Context()
     socket = context.socket(zmq.PUB)
-    socket.bind(SOCK)
-    logging.info("Publishing events on %s" % SOCK)
+    socket.connect(SOCK)
+    logging.info("Publishing events to %s" % SOCK)
     curses.wrapper(main)
