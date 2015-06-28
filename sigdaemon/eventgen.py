@@ -1,7 +1,7 @@
 #!/usr/bin/env python2.7
 # coding: utf-8
 
-SOCK = "tcp://0.0.0.0:9090"
+SOCK = "tcp://localhost:9080"
 
 import curses
 import zmq
@@ -25,6 +25,7 @@ BUTTONS = [
     [False, curses.KEY_DOWN,    'Down', 'Arrow down',   EVENT_ZEROMQ, 'ARROW DOWN PRESS', 'ARROW DOWN DEPRESS'],
     [True, ord('p'),            'P', 'Power',           EVENT_ZEROMQ, 'POWER ON', 'POWER OFF'],
     [False, ord(' '),           'Spacebar', 'Mode',     EVENT_ZEROMQ, 'MODE PRESS', 'MODE DEPRESS'],
+    [True, ord('b'),            'B', 'Battery',         EVENT_ZEROMQ, 'BATTERY FULL', 'BATTERY CHARGING'],
     [False, ord('q'),           'Q', 'Quit',            EVENT_QUIT, None, None],
 ]
 
@@ -87,6 +88,6 @@ if __name__ == '__main__':
     logging.info("Setting up ZeroMQ socket...")
     context = zmq.Context()
     socket = context.socket(zmq.PUB)
-    socket.bind(SOCK)
-    logging.info("Publishing events on %s" % SOCK)
+    socket.connect(SOCK)
+    logging.info("Publishing events to %s" % SOCK)
     curses.wrapper(main)

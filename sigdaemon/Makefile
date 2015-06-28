@@ -15,4 +15,7 @@ install-sigd: sigd
 install-card:
 	install card.py /usr/local/bin/card.py
 
-install: install-sigd install-card
+install-proxy:
+	install proxy.py /usr/local/bin/proxy.py
+
+install: install-sigd install-card install-proxy
