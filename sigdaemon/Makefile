@@ -18,4 +18,7 @@ install-card:
 install-proxy:
 	install proxy.py /usr/local/bin/proxy.py
 
-install: install-sigd install-card install-proxy
+install-webservice:
+	install webservice.py /usr/local/bin/webservice.py
+
+install: install-sigd install-card install-proxy install-webservice

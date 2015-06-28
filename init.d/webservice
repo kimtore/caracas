@@ -1,16 +1,20 @@
 #! /bin/sh
 ### BEGIN INIT INFO
-# Provides:          android
+# Provides:          webservice
 # Required-Start:    $local_fs
-# Required-Stop:     $local_fs $network
+# Required-Stop:     $local_fs
 # Default-Start:     2 3 4 5
-# Default-Stop:      0 6
-# Short-Description: Android features
-# Description:       Start and stop the Android device
+# Default-Stop:      0 1 6
+# Short-Description: Android battery webservice
+# Description:       Android battery webservice
 ### END INIT INFO
 
 # Author: Kim Tore Jensen <kim@incendio.no>
-SCRIPTNAME=android
+NAME=webservice
+DAEMON=/usr/local/bin/uwsgi
+OPTS="--http 0.0.0.0:8080 --wsgi-file /usr/local/bin/webservice.py"
+SCRIPTNAME=/etc/init.d/$NAME
+PIDFILE=/var/run/$NAME.pid
 
 # Read configuration variable file if it is present
 [ -r /etc/default/$NAME ] && . /etc/default/$NAME
@@ -28,11 +32,7 @@ SCRIPTNAME=android
 #
 do_start()
 {
-    [ "$VERBOSE" != no ] && log_action_msg "Starting ADB in root mode"
-    /usr/local/bin/adb root || return 2
-
-    [ "$VERBOSE" != no ] && log_action_msg "Turning on Android features"
-    /usr/local/bin/adb shell '(input keyevent 26 && settings put global airplane_mode_on 0 && am broadcast -a android.intent.action.AIRPLANE_MODE --ez state false && service call connectivity 34 i32 1)' || return 2
+    start-stop-daemon --start --quiet --pidfile $PIDFILE --startas $DAEMON --make-pidfile --background -- $OPTS
 }
 
 #
@@ -40,15 +40,7 @@ do_start()
 #
 do_stop()
 {
-    log_action_msg "Turning off Android screen"
-    /usr/local/bin/adb shell input keyevent 26 || return 2
-
-    log_action_msg "Enabling flight mode"
-    /usr/local/bin/adb shell settings put global airplane_mode_on 1 || return 2
-    /usr/local/bin/adb shell am broadcast -a android.intent.action.AIRPLANE_MODE --ez state true || return 2
-
-    log_action_msg "Stopping Android applications" || return 2
-    /usr/local/bin/adb shell am force-stop com.namelessdev.mpdroid
+    start-stop-daemon --stop --quiet --pidfile $PIDFILE
 }
 
 case "$1" in
@@ -63,6 +55,15 @@ case "$1" in
     stop)
         [ "$VERBOSE" != no ] && log_daemon_msg "Stopping $DESC" "$NAME"
         do_stop
+        case "$?" in
+            0|1) [ "$VERBOSE" != no ] && log_end_msg 0 ;;
+            2) [ "$VERBOSE" != no ] && log_end_msg 1 ;;
+        esac
+        ;;
+    restart)
+        [ "$VERBOSE" != no ] && log_daemon_msg "Restarting $DESC" "$NAME"
+        do_stop
+        do_start
         case "$?" in
             0|1) [ "$VERBOSE" != no ] && log_end_msg 0 ;;
             2) [ "$VERBOSE" != no ] && log_end_msg 1 ;;

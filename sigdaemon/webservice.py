@@ -2,10 +2,10 @@
 #
 # Web service used to proxy requests from Android
 #
-# Access with `curl http://<server>/battery?state=[01]
+# Access with `curl http://<server>/battery?level=[0..100]
 # 
-# State 0 = battery discharging
-# State 1 = battery full
+# Level 0..99 = battery charging
+# Level 100 = battery full
 
 import falcon
 import zmq
@@ -33,16 +33,14 @@ class BatteryResource(object):
 
     def on_get(self, req, resp):
         try:
-            state = req.get_param('state')
-            if state == '1':
+            lev = int(req.get_param('level'))
+            if lev == 100:
                 msg = 'BATTERY FULL'
-            elif state == '0':
-                msg = 'BATTERY CHARGING'
             else:
-                raise Exception('Required parameter "state" invalid\n')
+                msg = 'BATTERY CHARGING'
         except Exception, e:
             resp.status = falcon.HTTP_400
-            resp.body = unicode(e)
+            resp.body = 'Required parameter "level" invalid: %s\n' % unicode(e)
             return
 
         try:
@@ -58,6 +56,6 @@ class BatteryResource(object):
 zeromq = ZeroMQ()
 
 # start the WSGI application
-app = falcon.API()
+application = falcon.API()
 battery = BatteryResource(zeromq)
-app.add_route('/battery', battery)
+application.add_route('/battery', battery)

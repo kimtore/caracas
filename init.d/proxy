@@ -1,17 +1,17 @@
 #! /bin/sh
 ### BEGIN INIT INFO
-# Provides:          sigd
+# Provides:          proxy
 # Required-Start:    $local_fs
 # Required-Stop:     $local_fs
 # Default-Start:     2 3 4 5
 # Default-Stop:      0 1 6
-# Short-Description: Signal daemon
-# Description:       Signal daemon
+# Short-Description: Car daemon
+# Description:       Car daemon
 ### END INIT INFO
 
 # Author: Kim Tore Jensen <kim@incendio.no>
-NAME=sigd
-DAEMON=/usr/local/bin/$NAME
+NAME=proxy
+DAEMON=/usr/local/bin/$NAME.py
 SCRIPTNAME=/etc/init.d/$NAME
 PIDFILE=/var/run/$NAME.pid
 

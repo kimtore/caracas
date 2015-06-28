@@ -307,14 +307,10 @@ static uint8_t get_rotary_event(uint8_t pin_left, uint8_t pin_right)
  */
 static int log_zmq_send(void *socket, const char *str)
 {
-    int len = strlen(str);
-    zmq_msg_t msg;
-    zmq_msg_init_size(&msg, len);
-    strncpy(zmq_msg_data(&msg), str, len);
-#ifdef DEBUG
+#if DEBUG
     printf("PUB: %s\n", str);
 #endif
-    return zmq_send(socket, &msg, 0);
+    return zmq_send(socket, str, strlen(str), 0);
 }
 
 /**
@@ -326,9 +322,8 @@ void simple_zmq_send(const char *source, const char *state)
 
     sprintf(msg, "%s %s", source, state);
 
-    if (log_zmq_send(zmq_publisher, msg) != 0) {
-        perror("Fatal error when publishing ZeroMQ message");
-        opts.running = 0;
+    if (log_zmq_send(zmq_publisher, msg) == -1) {
+        perror("Error when publishing ZeroMQ message");
     }
 }
 
@@ -338,7 +333,7 @@ void simple_zmq_send(const char *source, const char *state)
 uint8_t debounce(uint16_t *state, uint8_t pin)
 {
     *state = (*state << 1) | digitalRead(pin);
-#ifdef DEBUG
+#if DEBUG
     printf("debounce %d %x\n", pin, *state);
 #endif
     return (*state == 0xffff || *state == 0x0000);
@@ -508,7 +503,7 @@ void handle_adc_events(uint8_t events, uint8_t last_events)
     uint8_t event;
     uint8_t state;
 
-#ifdef DEBUG
+#if DEBUG
     printf("handle_adc_events: events=%d, last_events=%d, changed=%d\n", events, last_events, changed);
 #endif
 
@@ -546,7 +541,7 @@ static uint8_t get_adc_event()
 
     for (pin = 0; pin < SPI_PIN_MAX; pin++) {
         voltage = analogRead(SPI_BASE + SPI_CHAN + pin);
-#ifdef DEBUG
+#if DEBUG
         printf("Voltage value from ADC channel %d pin %d: voltage=%d event=%d\n", SPI_CHAN, pin, voltage, analog_table[pin][voltage]);
 #endif
         events |= analog_table[pin][voltage];

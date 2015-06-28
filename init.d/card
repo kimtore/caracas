@@ -59,6 +59,15 @@ case "$1" in
             2) [ "$VERBOSE" != no ] && log_end_msg 1 ;;
         esac
         ;;
+    restart)
+        [ "$VERBOSE" != no ] && log_daemon_msg "Restarting $DESC" "$NAME"
+        do_stop
+        do_start
+        case "$?" in
+            0|1) [ "$VERBOSE" != no ] && log_end_msg 0 ;;
+            2) [ "$VERBOSE" != no ] && log_end_msg 1 ;;
+        esac
+        ;;
     *)
         echo "Usage: $SCRIPTNAME {start|stop}" >&2
         exit 3
