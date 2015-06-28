@@ -104,6 +104,12 @@ class MPD(object):
             syslog.syslog("Toggling play/pause state")
             self.mpd_client.pause()
 
+    def pause(self):
+        status = self.get_status()
+        if status['state'] == 'play':
+            syslog.syslog("Pausing music")
+            self.mpd_client.pause()
+
     def volume_shift(self, increment):
         status = self.get_status()
         shifted = int(status['volume']) + increment
@@ -123,6 +129,7 @@ class Dispatcher(object):
         self.system = system
         self.mpd = mpd
         self.battery_state = BATTERY_FULL  # assume Android battery full at boot
+        self.screen = True  # assume screen on at boot
         self.power = True  # assume power on at boot
         self.power_on_time = None
         self.set_power_on_time()
@@ -151,6 +158,25 @@ class Dispatcher(object):
         self.is_shutting_down = True
         self.system.shutdown()
 
+    def screen_on(self):
+        return self.screen == True
+
+    #
+    # Screen events
+    #
+    def neutral_screen_on(self):
+        self.screen = True
+        syslog.syslog('Android screen was reportedly switched on.')
+
+    def neutral_screen_off(self):
+        self.screen = False
+        syslog.syslog('Android screen was reportedly switched off.')
+
+    def mode_screen_on(self):
+        return self.neutral_screen_on()
+
+    def mode_screen_off(self):
+        return self.neutral_screen_off()
 
     #
     # Battery events
@@ -214,6 +240,8 @@ class Dispatcher(object):
         syslog.syslog("Ignition power has been restored, system will remain active.")
         self.power = True
         self.set_power_on_time()
+        if not self.screen_on():
+            self.system.android_toggle_screen()
 
     def neutral_power_off(self):
         syslog.syslog("Ignition power has been lost!")
@@ -223,6 +251,9 @@ class Dispatcher(object):
             syslog.syslog("Shutting down in %d seconds unless power is restored..." % SHUTDOWN_SECONDS)
         else:
             syslog.syslog("Will not shutdown, due to internal state.")
+        if self.screen_on():
+            self.system.android_toggle_screen()
+        self.mpd.pause()
 
     def mode_power_on(self):
         return self.neutral_power_on()
