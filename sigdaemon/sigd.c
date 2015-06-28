@@ -308,9 +308,7 @@ static uint8_t get_rotary_event(uint8_t pin_left, uint8_t pin_right)
  */
 static int log_zmq_send(void *socket, const char *str)
 {
-#if DEBUG
-    syslog("PUB: %s\n", str);
-#endif
+    syslog(LOG_MAKEPRI(LOG_DAEMON, LOG_INFO), "Publishing ZeroMQ event: %s\n", str);
     return zmq_send(socket, str, strlen(str), 0);
 }
 

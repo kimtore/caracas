@@ -256,7 +256,7 @@ class Dispatcher(object):
             syslog.syslog(syslog.LOG_DEBUG, "Dispatching to '%s'" % str(func.__name__))
             ret = func()
         else:
-            syslog.syslog(syslog.LOG_WARN, "No dispatcher found for this event")
+            syslog.syslog(syslog.LOG_WARNING, "No dispatcher found for this event")
 
         self.mode_dispatched = set_dispatched
         syslog.syslog(syslog.LOG_DEBUG, "Setting mode_dispatched variable to %s" % set_dispatched)
@@ -338,3 +338,6 @@ if __name__ == '__main__':
 
     except KeyboardInterrupt:
         syslog.syslog(syslog.LOG_NOTICE, "Exiting program.")
+
+    except Exception, e:
+        syslog.syslog(syslog.LOG_EMERG, "Uncaught exception: %s" % unicode(e))
