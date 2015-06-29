@@ -336,14 +336,19 @@ class Card(object):
         if callable(self.repeat_func):
             syslog.syslog("Repeating last dispatched function")
             self.repeat_func()
+            return True
+        return False
 
     def run(self):
+        tick = None
         while True:
-            events = dict(self.poller.poll(TICK))
+            events = dict(self.poller.poll(tick))
             if events:
                 self.process_zeromq_message()
+                tick = TICK
             else:
-                self.run_tick()
+                if not self.run_tick():
+                    tick = None
 
 
 if __name__ == '__main__':
