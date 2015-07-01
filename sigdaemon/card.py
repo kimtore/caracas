@@ -182,12 +182,18 @@ class Dispatcher(object):
     # Battery events
     #
     def neutral_battery_charging(self):
+        if self.battery_state != BATTERY_CHARGING:
+            syslog.syslog('Android battery is now charging.')
+            if not self.power:
+                syslog.syslog('System shutdown will be deferred until Android battery is full.')
         self.battery_state = BATTERY_CHARGING
-        syslog.syslog('Android battery is charging. Shutdown will be deferred until battery is charged.')
 
     def neutral_battery_full(self):
+        if self.battery_state != BATTERY_FULL:
+            syslog.syslog('Android battery is now full.')
+            if not self.power:
+                syslog.syslog('System shutdown is now re-enabled.')
         self.battery_state = BATTERY_FULL
-        syslog.syslog('Android battery is full. Shutdown is enabled.')
 
     def mode_battery_charging(self):
         return self.neutral_battery_charging()
