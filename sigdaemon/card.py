@@ -54,11 +54,9 @@ class System(object):
         return process.returncode, stderr, stdout
 
     def shutdown(self):
-        syslog.syslog("Shutting down the entire system!")
         self.run(['/sbin/init', '0'])
 
     def android_toggle_screen(self):
-        syslog.syslog("Toggling Android screen on/off")
         self.run(['/usr/local/bin/adb', 'shell', 'input', 'keyevent', '26'])
 
 
@@ -72,6 +70,7 @@ class Dispatcher(object):
         self.screen = True  # assume screen on at boot
         self.power = True  # assume power on at boot
         self.power_on_time = None
+        self.hibernated = False
         self.set_power_on_time()
         self.button_mode = 'neutral'
         self.mode_dispatched = True
@@ -99,15 +98,53 @@ class Dispatcher(object):
     def needs_shutdown(self):
         if not self.can_shutdown():
             return False
+        return self.shutdown_timed_out()
+
+    def needs_hibernation(self):
+        if self.hibernated:
+            return False
+        if self.power or self.is_shutting_down:
+            return False
+        if self.can_shutdown():
+            return False
+        return self.shutdown_timed_out()
+
+    def needs_thaw(self):
+        return self.hibernated and self.power and not self.is_shutting_down
+
+    def shutdown_timed_out(self):
         delta = datetime.datetime.now() - self.power_on_time
         return delta.total_seconds() > SHUTDOWN_SECONDS
 
     def shutdown(self):
+        syslog.syslog("Shutting down the entire system!")
         self.is_shutting_down = True
         self.system.shutdown()
 
-    def screen_on(self):
+    def is_screen_on(self):
         return self.screen == True
+
+    def screen_on(self):
+        syslog.syslog('Turning screen on.')
+        if not self.is_screen_on():
+            self.system.android_toggle_screen()
+
+    def screen_off(self):
+        syslog.syslog('Turning screen off.')
+        if self.is_screen_on():
+            self.system.android_toggle_screen()
+
+    def hibernate(self):
+        syslog.syslog('Putting system in hibernation mode.')
+        self.screen_off()
+        self.publisher.send_string('MPD PAUSE')
+        self.hibernated = True
+
+    def thaw(self):
+        syslog.syslog('Restoring system from hibernation mode.')
+        self.screen_on()
+        self.publisher.send_string('MPD UNPAUSE')
+        self.hibernated = False
 
     #
     # Screen events
@@ -194,7 +231,7 @@ class Dispatcher(object):
         syslog.syslog("Ignition power has been restored, system will remain active.")
         self.power = True
         self.set_power_on_time()
-        if not self.screen_on():
+        if not self.is_screen_on():
             self.system.android_toggle_screen()
 
     def neutral_power_off(self):
@@ -204,11 +241,7 @@ class Dispatcher(object):
         if self.can_shutdown():
             syslog.syslog("Shutting down in %d seconds unless power is restored..." % SHUTDOWN_SECONDS)
         else:
-            syslog.syslog("Will not shutdown, due to internal state.")
-        if self.screen_on():
-            self.system.android_toggle_screen()
-
-        self.publisher.send_string('MPD PAUSE')
+            syslog.syslog("Shutdown is temporarily disabled due to battery level or other internal state.")
 
     def mode_power_on(self):
         return self.neutral_power_on()
@@ -294,6 +327,10 @@ class Card(object):
     def run_tick(self):
         if self.dispatcher.needs_shutdown():
             self.dispatcher.shutdown()
+        if self.dispatcher.needs_hibernation():
+            self.dispatcher.hibernate()
+        if self.dispatcher.needs_thaw():
+            self.dispatcher.thaw()
         if callable(self.repeat_func):
             syslog.syslog("Repeating last dispatched function")
             self.repeat_func()
