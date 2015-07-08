@@ -109,6 +109,7 @@ int main(int argc, char *argv[])
 {
     int err;
     int cmd = CMD_NUM_NONE;
+    int errors = 0;
     struct mpd_connection * connection;
     void * context;
     void * socket;
@@ -157,10 +158,15 @@ int main(int argc, char *argv[])
         if (err != MPD_ERROR_SUCCESS && !mpd_connection_clear_error(connection)) {
             syslog(LOG_WARNING, "Could not recover from mpd error, reconnecting.");
             mpd_connection_free(connection);
-            sleep(1);
+            if (errors++ > 0) {
+                sleep(1);
+            }
             connection = get_mpd_connection();
             continue;
         }
+
+        /* Reset mpd error count */
+        errors = 0;
 
         /* If command failed due to MPD error, try re-running it */
         if (cmd == CMD_NUM_NONE) {
