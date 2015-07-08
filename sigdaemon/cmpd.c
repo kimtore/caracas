@@ -12,12 +12,14 @@
 #define CMD_NUM_PREV 3
 #define CMD_NUM_PLAY_PAUSE 4
 #define CMD_NUM_PAUSE 5
+#define CMD_NUM_UNPAUSE 6
 
 #define CMD_VOLUME_STEP "VOLUME STEP"
 #define CMD_NEXT "NEXT"
 #define CMD_PREV "PREV"
 #define CMD_PLAY_PAUSE "PLAY OR PAUSE"
 #define CMD_PAUSE "PAUSE"
+#define CMD_UNPAUSE "UNPAUSE"
 
 #define PARAM_POS(X, Y)  (char *)X + strlen(Y) + 1
 
@@ -36,6 +38,8 @@ int cmd_from_msg(char *msg, void **params)
         return CMD_NUM_PLAY_PAUSE;
     } else if (!strncmp(msg, CMD_PAUSE, strlen(CMD_PAUSE))) {
         return CMD_NUM_PAUSE;
+    } else if (!strncmp(msg, CMD_UNPAUSE, strlen(CMD_UNPAUSE))) {
+        return CMD_NUM_UNPAUSE;
     }
 
     return CMD_NUM_ERROR;
@@ -49,27 +53,31 @@ void process_cmd(struct mpd_connection * connection, int cmd, const char *params
     switch(cmd) {
         case CMD_NUM_VOLUME_STEP:
             volume_delta = atoi(params);
-            syslog(LOG_INFO, "Changing volume by delta %d", volume_delta);
+            syslog(LOG_INFO, "Running mpd command: change volume by delta %d", volume_delta);
             err = mpd_run_change_volume(connection, volume_delta);
             break;
         case CMD_NUM_PREV:
-            syslog(LOG_INFO, "Changing to previous song");
+            syslog(LOG_INFO, "Running mpd command: change to previous song");
             err = mpd_run_previous(connection);
             break;
         case CMD_NUM_NEXT:
-            syslog(LOG_INFO, "Changing to next song");
+            syslog(LOG_INFO, "Running mpd command: change to next song");
             err = mpd_run_next(connection);
             break;
         case CMD_NUM_PLAY_PAUSE:
-            syslog(LOG_INFO, "Toggling play/pause status");
+            syslog(LOG_INFO, "Running mpd command: toggle play/pause status");
             err = mpd_run_toggle_pause(connection);
             break;
         case CMD_NUM_PAUSE:
-            syslog(LOG_INFO, "Pausing music");
+            syslog(LOG_INFO, "Running mpd command: pause music");
             err = mpd_run_pause(connection, true);
             break;
+        case CMD_NUM_UNPAUSE:
+            syslog(LOG_INFO, "Running mpd command: unpause music");
+            err = mpd_run_pause(connection, false);
+            break;
         default:
-            syslog(LOG_WARNING, "Unhandled command %d", cmd);
+            syslog(LOG_WARNING, "Unable to run unhandled mpd command %d with params %s", cmd, params);
             break;
     }
 }

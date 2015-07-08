@@ -50,6 +50,7 @@ class System(object):
         except Exception, e:
             syslog.syslog("Failed opening subprocess with shell command: %s" % unicode(e))
             return -1, [], []
+        syslog.syslog("Shell command finished with return code %d" % process.returncode)
         return process.returncode, stderr, stdout
 
     def shutdown(self):
