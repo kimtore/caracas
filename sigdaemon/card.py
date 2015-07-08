@@ -221,6 +221,18 @@ class Dispatcher(object):
     def neutral_arrow_down_press(self):
         self.publisher.send_string('MPD PREV')
 
+    def mode_volume_down_press(self):
+        self.publisher.send_string('MPD PREV ALBUM')
+
+    def mode_volume_up_press(self):
+        self.publisher.send_string('MPD NEXT ALBUM')
+
+    def mode_arrow_up_press(self):
+        self.publisher.send_string('MPD NEXT ARTIST')
+
+    def mode_arrow_down_press(self):
+        self.publisher.send_string('MPD PREV ARTIST')
+
     #
     # Ignition power events
     #
