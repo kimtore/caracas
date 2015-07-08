@@ -6,7 +6,6 @@ import argparse
 import syslog
 import subprocess
 import datetime
-import mpd
 
 
 # Battery state constants
@@ -14,7 +13,10 @@ BATTERY_CHARGING = 0
 BATTERY_FULL = 1
 
 # ZeroMQ publisher socket
-SOCK = "tcp://localhost:9090"
+PUB_SOCK = "tcp://localhost:9090"
+
+# ZeroMQ subscriber socket
+SUB_SOCK = "tcp://localhost:9080"
 
 # How many seconds to keep the system alive during loss of ignition power
 SHUTDOWN_SECONDS = 3
@@ -42,10 +44,13 @@ class System(object):
     """
     def run(self, cmd):
         syslog.syslog("Running shell command: %s" % ' '.join(cmd))
-        process = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        stdout, stderr = process.communicate()
-        exit_code = process.returncode
-        return exit_code, stderr, stdout
+        try:
+            process = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            stdout, stderr = process.communicate()
+        except Exception, e:
+            syslog.syslog("Failed opening subprocess with shell command: %s" % unicode(e))
+            return -1, [], []
+        return process.returncode, stderr, stdout
 
     def shutdown(self):
         syslog.syslog("Shutting down the entire system!")
@@ -56,69 +61,12 @@ class System(object):
         self.run(['/usr/local/bin/adb', 'shell', 'input', 'keyevent', '26'])
 
 
-class MPD(object):
-    """
-    Communicate with the Music Player Daemon
-    """
-    def __init__(self, mpd_client):
-        self.mpd_client = mpd_client
-
-    def connect(self):
-        self.mpd_client.timeout = 5
-        self.mpd_client.idletimeout = None
-        self.mpd_client.connect('localhost', 6600)
-
-    def get_status(self):
-        try:
-            status = self.mpd_client.status()
-        except mpd.ConnectionError:
-            self.connect()
-            status = self.mpd_client.status()
-        return status
-
-    def prev(self):
-        status = self.get_status()
-        syslog.syslog("Switching to previous song")
-        self.mpd_client.previous()
-
-    def next(self):
-        status = self.get_status()
-        syslog.syslog("Switching to next song")
-        self.mpd_client.next()
-
-    def play_or_pause(self):
-        status = self.get_status()
-        if status['state'] == 'stop':
-            syslog.syslog("Starting to play music")
-            self.mpd_client.play()
-        else:
-            syslog.syslog("Toggling play/pause state")
-            self.mpd_client.pause()
-
-    def pause(self):
-        status = self.get_status()
-        if status['state'] == 'play':
-            syslog.syslog("Pausing music")
-            self.mpd_client.pause()
-
-    def volume_shift(self, increment):
-        status = self.get_status()
-        shifted = int(status['volume']) + increment
-        if shifted > 100:
-            shifted = 100
-        if shifted < 0:
-            shifted = 0
-        syslog.syslog("Setting volume to %d" % shifted)
-        self.mpd_client.setvol(shifted)
-
-
 class Dispatcher(object):
     """
     Map button events to correct actions
     """
-    def __init__(self, system, mpd):
+    def __init__(self, system):
         self.system = system
-        self.mpd = mpd
         self.battery_state = BATTERY_FULL  # assume Android battery full at boot
         self.screen = True  # assume screen on at boot
         self.power = True  # assume power on at boot
@@ -127,6 +75,14 @@ class Dispatcher(object):
         self.button_mode = 'neutral'
         self.mode_dispatched = True
         self.is_shutting_down = True
+        self.init_zeromq()
+
+    def init_zeromq(self):
+        syslog.syslog("Setting up ZeroMQ publisher socket...")
+        self.context = zmq.Context()
+        self.publisher = self.context.socket(zmq.PUB)
+        self.publisher.connect(SUB_SOCK)
+        syslog.syslog("Publishing events to %s" % SUB_SOCK)
 
     def set_power_on_time(self):
         self.power_on_time = datetime.datetime.now()
@@ -196,19 +152,19 @@ class Dispatcher(object):
     # Rotary events
     #
     def neutral_rotary_left(self):
-        self.mpd.volume_shift(-VOLUME_STEP)
+        self.publisher.send_string('MPD VOLUME STEP %d' % -VOLUME_STEP)
 
     def mode_rotary_left(self):
-        self.mpd.prev()
+        self.publisher.send_string('MPD PREV')
 
     def neutral_rotary_right(self):
-        self.mpd.volume_shift(VOLUME_STEP)
+        self.publisher.send_string('MPD VOLUME STEP %d' % VOLUME_STEP)
 
     def mode_rotary_right(self):
-        self.mpd.next()
+        self.publisher.send_string('MPD NEXT')
 
     def neutral_rotary_press(self):
-        self.mpd.play_or_pause()
+        self.publisher.send_string('MPD PLAY OR PAUSE')
 
     def mode_rotary_press(self):
         self.system.android_toggle_screen()
@@ -218,17 +174,17 @@ class Dispatcher(object):
     #
     @repeatable
     def neutral_volume_down_press(self):
-        self.mpd.volume_shift(-VOLUME_STEP)
+        self.publisher.send_string('MPD VOLUME STEP %d' % -VOLUME_STEP)
 
     @repeatable
     def neutral_volume_up_press(self):
-        self.mpd.volume_shift(VOLUME_STEP)
+        self.publisher.send_string('MPD VOLUME STEP %d' % VOLUME_STEP)
 
     def neutral_arrow_up_press(self):
-        self.mpd.next()
+        self.publisher.send_string('MPD NEXT')
 
     def neutral_arrow_down_press(self):
-        self.mpd.prev()
+        self.publisher.send_string('MPD PREV')
 
     #
     # Ignition power events
@@ -250,7 +206,8 @@ class Dispatcher(object):
             syslog.syslog("Will not shutdown, due to internal state.")
         if self.screen_on():
             self.system.android_toggle_screen()
-        self.mpd.pause()
+
+        self.publisher.send_string('MPD PAUSE')
 
     def mode_power_on(self):
         return self.neutral_power_on()
@@ -312,17 +269,23 @@ class Card(object):
         self.repeat_func = None
 
     def setup_zeromq(self):
-        syslog.syslog("Setting up ZeroMQ socket...")
+        syslog.syslog("Setting up ZeroMQ subscriber socket...")
         self.context = zmq.Context()
-        self.socket = self.context.socket(zmq.SUB)
-        self.socket.connect(SOCK)
-        self.socket.setsockopt_string(zmq.SUBSCRIBE, u'')
+        self.subscriber = self.context.socket(zmq.SUB)
+        self.subscriber.connect(PUB_SOCK)
+        self.subscriber.setsockopt_string(zmq.SUBSCRIBE, u'BATTERY')
+        self.subscriber.setsockopt_string(zmq.SUBSCRIBE, u'SCREEN')
+        self.subscriber.setsockopt_string(zmq.SUBSCRIBE, u'POWER')
+        self.subscriber.setsockopt_string(zmq.SUBSCRIBE, u'MODE')
+        self.subscriber.setsockopt_string(zmq.SUBSCRIBE, u'ARROW')
+        self.subscriber.setsockopt_string(zmq.SUBSCRIBE, u'VOLUME')
+        self.subscriber.setsockopt_string(zmq.SUBSCRIBE, u'ROTARY')
         self.poller = zmq.Poller()
-        self.poller.register(self.socket, zmq.POLLIN)
-        syslog.syslog("Listening for events from signal daemon on %s" % SOCK)
+        self.poller.register(self.subscriber, zmq.POLLIN)
+        syslog.syslog("Listening for events on %s" % PUB_SOCK)
 
     def process_zeromq_message(self):
-        string = self.socket.recv_string()
+        string = self.subscriber.recv_string()
         syslog.syslog("Received event: %s" % string)
         tokens = string.strip().lower().split()
         self.repeat_func = self.dispatcher.dispatch(*tokens)
@@ -353,10 +316,8 @@ if __name__ == '__main__':
     if not args.debug:
         syslog.setlogmask(syslog.LOG_UPTO(syslog.LOG_INFO))
 
-    mpdclient = mpd.MPDClient()
-    mpd_ = MPD(mpdclient)
     system = System()
-    dispatcher = Dispatcher(system, mpd_)
+    dispatcher = Dispatcher(system)
 
     card = Card(dispatcher)
     card.setup_zeromq()
