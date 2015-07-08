@@ -19,7 +19,7 @@ PUB_SOCK = "tcp://localhost:9090"
 SUB_SOCK = "tcp://localhost:9080"
 
 # How many seconds to keep the system alive during loss of ignition power
-SHUTDOWN_SECONDS = 3
+POWER_TIMEOUT = 2
 
 # Delta MPD volume each time a volume change event is triggered
 VOLUME_STEP = 2
@@ -114,7 +114,7 @@ class Dispatcher(object):
 
     def shutdown_timed_out(self):
         delta = datetime.datetime.now() - self.power_on_time
-        return delta.total_seconds() > SHUTDOWN_SECONDS
+        return delta.total_seconds() > POWER_TIMEOUT
 
     def shutdown(self):
         syslog.syslog("Shutting down the entire system!")
@@ -239,7 +239,7 @@ class Dispatcher(object):
         self.power = False
         self.set_power_on_time()
         if self.can_shutdown():
-            syslog.syslog("Shutting down in %d seconds unless power is restored..." % SHUTDOWN_SECONDS)
+            syslog.syslog("Shutting down in %d seconds unless power is restored..." % POWER_TIMEOUT)
         else:
             syslog.syslog("Shutdown is temporarily disabled due to battery level or other internal state.")
 
