@@ -51,15 +51,6 @@ class System(object):
         syslog.syslog("Shutting down the entire system!")
         self.run(['/sbin/init', '0'])
 
-    def try_shutdown(self):
-        syslog.syslog("Checking whether system should be shut down...")
-        if pending_shutdown:
-            syslog.syslog("Yes!")
-            shutdown()
-            return True
-        syslog.syslog("No.")
-        return False
-
     def android_toggle_screen(self):
         syslog.syslog("Toggling Android screen on/off")
         self.run(['/usr/local/bin/adb', 'shell', 'input', 'keyevent', '26'])
