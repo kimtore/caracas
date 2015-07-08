@@ -204,9 +204,6 @@ class Dispatcher(object):
     def neutral_rotary_press(self):
         self.publisher.send_string('MPD PLAY OR PAUSE')
 
-    def mode_rotary_press(self):
-        self.system.android_toggle_screen()
-
     #
     # Steering wheel up/down and volumes
     #
@@ -231,8 +228,6 @@ class Dispatcher(object):
         syslog.syslog("Ignition power has been restored, system will remain active.")
         self.power = True
         self.set_power_on_time()
-        if not self.is_screen_on():
-            self.system.android_toggle_screen()
 
     def neutral_power_off(self):
         syslog.syslog("Ignition power has been lost!")
@@ -261,6 +256,7 @@ class Dispatcher(object):
     def mode_mode_depress(self):
         self.button_mode = 'neutral'
         if not self.mode_dispatched:
+            syslog.syslog('Driver requested screen toggle')
             self.system.android_toggle_screen()
 
     #
