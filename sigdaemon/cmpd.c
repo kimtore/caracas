@@ -242,6 +242,35 @@ int jump_to(struct mpd_connection * connection, enum mpd_tag_type tag, int delta
     return 0;
 }
 
+int change_volume(struct mpd_connection * connection, int delta)
+{
+    int err;
+    int volume;
+    struct mpd_status * status;
+
+    status = mpd_run_status(connection);
+    if (!status) {
+        return -1;
+    }
+
+    volume = mpd_status_get_volume(status);
+    if (volume == -1) {
+        syslog(LOG_WARNING, "Cannot set mpd volume: no volume support");
+        mpd_status_free(status);
+        return -1;
+    }
+
+    volume += delta;
+    if (volume < 0) {
+        volume = 0;
+    } else if (volume > 100) {
+        volume = 100;
+    }
+
+    mpd_status_free(status);
+    return mpd_run_set_volume(connection, volume);
+}
+
 /* Command dispatcher */
 void process_cmd(struct mpd_connection * connection, int cmd, const char *params)
 {
@@ -252,7 +281,7 @@ void process_cmd(struct mpd_connection * connection, int cmd, const char *params
         case CMD_NUM_VOLUME_STEP:
             volume_delta = atoi(params);
             syslog(LOG_INFO, "Running mpd command: change volume by delta %d", volume_delta);
-            err = mpd_run_change_volume(connection, volume_delta);
+            err = change_volume(connection, volume_delta);
             break;
         case CMD_NUM_PREV:
             syslog(LOG_INFO, "Running mpd command: change to previous song");
