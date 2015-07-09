@@ -308,7 +308,7 @@ static uint8_t get_rotary_event(uint8_t pin_left, uint8_t pin_right)
  */
 static int log_zmq_send(void *socket, const char *str)
 {
-    syslog(LOG_MAKEPRI(LOG_DAEMON, LOG_INFO), "Publishing ZeroMQ event: %s", str);
+    syslog(LOG_INFO, "Publishing ZeroMQ event: %s", str);
     return zmq_send(socket, str, strlen(str), 0);
 }
 
@@ -333,7 +333,7 @@ uint8_t debounce(uint16_t *state, uint8_t pin)
 {
     *state = (*state << 1) | digitalRead(pin);
 #if DEBUG
-    syslog(LOG_MAKEPRI(LOG_DAEMON, LOG_DEBUG), "debounce %d %x", pin, *state);
+    syslog(LOG_DEBUG, "debounce %d %x", pin, *state);
 #endif
     return (*state == 0xffff || *state == 0x0000);
 }
@@ -392,13 +392,13 @@ void callback_rotary_click()
     
     result = read_debounced(PIN_ROTARY_CLICK);
     if (result == -1) {
-        syslog(LOG_MAKEPRI(LOG_DAEMON, LOG_DEBUG), "Encountered some noise on rotary click pin");
+        syslog(LOG_DEBUG, "Encountered some noise on rotary click pin");
         return;
     }
 
     event = get_pin_event(PIN_ROTARY_CLICK);
     if (event == EVENT_NONE) {
-        syslog(LOG_MAKEPRI(LOG_DAEMON, LOG_DEBUG), "Wrong event on rotary click pin, unexpected %s", event_name(event));
+        syslog(LOG_DEBUG, "Wrong event on rotary click pin, unexpected %s", event_name(event));
         return;
     }
 
@@ -417,13 +417,13 @@ void callback_power_state()
     
     result = read_debounced(PIN_POWER_STATE);
     if (result == -1) {
-        syslog(LOG_MAKEPRI(LOG_DAEMON, LOG_DEBUG), "Encountered some noise on power pin");
+        syslog(LOG_DEBUG, "Encountered some noise on power pin");
         return;
     }
 
     event = get_pin_event(PIN_POWER_STATE);
     if (event == EVENT_NONE) {
-        syslog(LOG_MAKEPRI(LOG_DAEMON, LOG_DEBUG), "Wrong event on power pin, unexpected %s", event_name(event));
+        syslog(LOG_DEBUG, "Wrong event on power pin, unexpected %s", event_name(event));
         return;
     }
 
@@ -446,7 +446,7 @@ static void clear_opts(struct opts_t *o)
  */
 void signal_handler(int s)
 {
-    syslog(LOG_MAKEPRI(LOG_DAEMON, LOG_NOTICE), "Caught signal %d", s);
+    syslog(LOG_NOTICE, "Caught signal %d", s);
     opts.running = 0;
 }
 
@@ -503,7 +503,7 @@ void handle_adc_events(uint8_t events, uint8_t last_events)
     uint8_t state;
 
 #if DEBUG
-    syslog(LOG_MAKEPRI(LOG_DAEMON, LOG_DEBUG), "handle_adc_events: events=%d, last_events=%d, changed=%d", events, last_events, changed);
+    syslog(LOG_DEBUG, "handle_adc_events: events=%d, last_events=%d, changed=%d", events, last_events, changed);
 #endif
 
     if (changed & ANALOG_MODE) {
@@ -541,7 +541,7 @@ static uint8_t get_adc_event()
     for (pin = 0; pin < SPI_PIN_MAX; pin++) {
         voltage = analogRead(SPI_BASE + SPI_CHAN + pin);
 #if DEBUG
-        syslog(LOG_MAKEPRI(LOG_DAEMON, LOG_DEBUG), "Voltage value from ADC channel %d pin %d: voltage=%d event=%d", SPI_CHAN, pin, voltage, analog_table[pin][voltage]);
+        syslog(LOG_DEBUG, "Voltage value from ADC channel %d pin %d: voltage=%d event=%d", SPI_CHAN, pin, voltage, analog_table[pin][voltage]);
 #endif
         events |= analog_table[pin][voltage];
     }
@@ -586,14 +586,14 @@ int main(int argc, char **argv)
 
     clear_opts(&opts);
 
-    syslog(LOG_MAKEPRI(LOG_DAEMON, LOG_NOTICE), "Caracas daemon started.");
+    syslog(LOG_NOTICE, "Caracas daemon started.");
 
     while (opts.running) {
         get_adc_event();
         usleep(SPI_INTERVAL);
     }
 
-    syslog(LOG_MAKEPRI(LOG_DAEMON, LOG_NOTICE), "Received shutdown signal, exiting.");
+    syslog(LOG_NOTICE, "Received shutdown signal, exiting.");
 
     zmq_close(zmq_publisher);
     zmq_term(zmq_context);
