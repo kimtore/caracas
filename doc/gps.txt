@@ -1,0 +1,5 @@
+GPS board from AdaFruit:
+- https://learn.adafruit.com/adafruit-ultimate-gps-hat-for-raspberry-pi/overview
+
+Might use GPSBridge software to directly read NMEA:
+- https://play.google.com/store/apps/details?id=com.rbc.gpsbridge

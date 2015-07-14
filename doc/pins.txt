@@ -1,20 +1,20 @@
 GPIO pin usage
 --------------
 
-2   +5V constant        board
-4   +5V constant        board
-6   GND                 board                   note: switched, different potensial than chassis GND
-    GND                 header, rotary click
-8   GPIO14              header, rotary click
-10  GPIO15              header, rotary binary
-12  GPIO18              header, rotary binary
-14  GND                 header, rotary binary
-16  Suicide out         board
-18  +12V ignition       board
-24  SPI CS              board
-32  Amplifier power     board
+8   TXD                 RS232   gps
+10  RXD                 RS232   gps
+16  Suicide out         OUTPUT  board, flip-flop reset
+18  +12V ignition       INPUT   board, ignition on/off
+20  GND                         header, rotary click
+22  GPIO25              INPUT   header, rotary click
+24  SPI CS              SPI     board
 
-17  +3.3V to ADC        board
-19  SPI MOSI            board
-21  SPI MISO            board
-23  SPI CLK             board
+7   GPCLK0              INPUT   gps, pulse per second
+11  Amplifier power     OUTPUT  board, amplifier power switch
+17  +3.3V to ADC
+19  SPI MOSI            SPI
+21  SPI MISO            SPI
+23  SPI CLK             SPI
+35  GPIO19              INPUT   header, rotary binary
+37  GPIO26              INPUT   header, rotary binary
+39  GND                         header, rotary binary
