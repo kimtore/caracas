@@ -1,0 +1,13 @@
+service gps
+{
+    type        = UNLISTED
+    disable     = no
+    port        = 9000
+    socket_type = stream
+    protocol    = tcp
+    user        = nobody
+    wait        = no
+    log_type    = SYSLOG daemon
+    server      = /usr/bin/gpspipe
+    server_args = -r
+}
