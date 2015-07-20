@@ -35,7 +35,7 @@ if __name__ == '__main__':
             report = r
             now = datetime.datetime.now()
             delta = now - then
-            if delta.total_seconds() > LOG_INTERVAL:
+            if delta.total_seconds() >= LOG_INTERVAL:
                 then = now
                 syslog.syslog(make_report_line(report))
     except Exception, e:
