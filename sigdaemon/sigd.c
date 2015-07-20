@@ -31,8 +31,8 @@ typedef unsigned short      uint16_t;
  * These pins are pulled LOW when the button is active.
  */
 #define PIN_ROTARY_CLICK    6   /* BCM_GPIO pin 25, physical pin 22 */
-#define PIN_ROTARY_LEFT     25  /* BCM_GPIO pin 26, physical pin 37 */
-#define PIN_ROTARY_RIGHT    24  /* BCM_GPIO pin 19, physical pin 39 */
+#define PIN_ROTARY_RIGHT    25  /* BCM_GPIO pin 26, physical pin 37 */
+#define PIN_ROTARY_LEFT     24  /* BCM_GPIO pin 19, physical pin 39 */
 
 /**
  * Power state, input.
