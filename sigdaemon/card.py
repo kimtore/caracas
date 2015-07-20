@@ -118,8 +118,14 @@ class Dispatcher(object):
 
     def shutdown(self):
         syslog.syslog("Shutting down the entire system!")
+        self.screen_off()
+        self.publisher.send_string('MPD PAUSE')
         self.is_shutting_down = True
         self.system.shutdown()
+
+    def boot(self):
+        syslog.syslog("System booted, turning on music.")
+        self.publisher.send_string('MPD UNPAUSE')
 
     def is_screen_on(self):
         return self.screen == True
@@ -364,6 +370,7 @@ if __name__ == '__main__':
 
     system = System()
     dispatcher = Dispatcher(system)
+    dispatcher.boot()
 
     card = Card(dispatcher)
     card.setup_zeromq()
