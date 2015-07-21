@@ -27,4 +27,7 @@ install-proxy:
 install-webservice:
 	install webservice.py /usr/local/bin/webservice.py
 
-install: install-sigd install-cmpd install-card install-proxy install-webservice
+install-gpslog:
+	install gpslog.py /usr/local/bin/gpslog.py
+
+install: install-sigd install-cmpd install-card install-proxy install-webservice install-gpslog
