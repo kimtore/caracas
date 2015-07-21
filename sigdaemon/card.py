@@ -1,5 +1,6 @@
 #!/usr/bin/env python2.7
 
+import os
 import sys
 import zmq
 import argparse
@@ -7,6 +8,9 @@ import syslog
 import subprocess
 import datetime
 
+
+# Touch this file to prevent shutdown by Card in any circumstance
+SHUTDOWN_PREVENT_FILE = '/tmp/keepalive'
 
 # Battery state constants
 BATTERY_CHARGING = 0
@@ -93,6 +97,8 @@ class Dispatcher(object):
             return False
         if self.battery_state == BATTERY_CHARGING:
             return False
+        if self.is_keepalive():
+            return False
         return True
 
     def needs_shutdown(self):
@@ -117,15 +123,18 @@ class Dispatcher(object):
         return delta.total_seconds() > POWER_TIMEOUT
 
     def shutdown(self):
-        syslog.syslog("Shutting down the entire system!")
         self.screen_off()
         self.publisher.send_string('MPD PAUSE')
+        syslog.syslog("Shutting down the entire system!")
         self.is_shutting_down = True
         self.system.shutdown()
 
     def boot(self):
         syslog.syslog("System booted, turning on music.")
         self.publisher.send_string('MPD UNPAUSE')
+
+    def is_keepalive(self):
+        return os.path.exists(SHUTDOWN_PREVENT_FILE)
 
     def is_screen_on(self):
         return self.screen == True
