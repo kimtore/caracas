@@ -244,7 +244,6 @@ int jump_to(struct mpd_connection * connection, enum mpd_tag_type tag, int delta
 
 int change_volume(struct mpd_connection * connection, int delta)
 {
-    int err;
     int volume;
     struct mpd_status * status;
 
@@ -271,6 +270,33 @@ int change_volume(struct mpd_connection * connection, int delta)
     return mpd_run_set_volume(connection, volume);
 }
 
+int toggle_pause(struct mpd_connection * connection)
+{
+    enum mpd_state state;
+    struct mpd_status * status;
+
+    status = mpd_run_status(connection);
+    if (!status) {
+        return -1;
+    }
+
+    state = mpd_status_get_state(status);
+    mpd_status_free(status);
+
+    switch(state) {
+        default:
+            syslog(LOG_ERR, "Encountered unknown state in mpd status, but continuing anyway with 'play' command");
+            /* break intentionally omitted */
+        case MPD_STATE_UNKNOWN:
+        case MPD_STATE_STOP:
+            return mpd_run_play(connection);
+        case MPD_STATE_PLAY:
+            return mpd_run_pause(connection, true);
+        case MPD_STATE_PAUSE:
+            return mpd_run_pause(connection, false);
+    }
+}
+
 /* Command dispatcher */
 void process_cmd(struct mpd_connection * connection, int cmd, const char *params)
 {
@@ -293,7 +319,7 @@ void process_cmd(struct mpd_connection * connection, int cmd, const char *params
             break;
         case CMD_NUM_PLAY_PAUSE:
             syslog(LOG_INFO, "Running mpd command: toggle play/pause status");
-            err = mpd_run_toggle_pause(connection);
+            err = toggle_pause(connection);
             break;
         case CMD_NUM_PAUSE:
             syslog(LOG_INFO, "Running mpd command: pause music");
