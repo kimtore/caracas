@@ -7,6 +7,7 @@ import argparse
 import syslog
 import subprocess
 import datetime
+import time
 
 
 # Touch this file to prevent shutdown by Card in any circumstance
@@ -379,6 +380,7 @@ if __name__ == '__main__':
 
     system = System()
     dispatcher = Dispatcher(system)
+    time.sleep(0.2)  # wait for the ZeroMQ socket to establish a connection
     dispatcher.boot()
 
     card = Card(dispatcher)
