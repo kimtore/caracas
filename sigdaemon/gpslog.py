@@ -5,6 +5,7 @@
 import gps
 import syslog
 import datetime
+import collections
 
 
 LOG_INTERVAL = 60
@@ -12,12 +13,15 @@ LOG_INTERVAL = 60
 
 def add_attr(report, line, key):
     if hasattr(report, key):
-        line += [(key, report[key])]
+        if key == 'speed' or key == 'climb':
+            line[key] = float(report[key]) * gps.MPS_TO_KPH
+        else:
+            line[key] = report[key]
 
 def make_report_line(report):
-    output = []
-    [add_attr(report, output, key) for key in ['time', 'lat', 'lon', 'alt', 'speed']]
-    line = ' '.join(['%s=%s' % (k, v) for k, v in output])
+    output = collections.OrderedDict()
+    [add_attr(report, output, key) for key in ['time', 'lat', 'lon', 'alt', 'speed', 'track', 'climb']]
+    line = ' '.join(['%s=%s' % (k, v) for k, v in output.iteritems()])
     line = "%dD fix: %s" % (report['mode'], line)
     return line
 
