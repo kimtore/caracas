@@ -58,6 +58,9 @@ class System(object):
         syslog.syslog("Shell command finished with return code %d" % process.returncode)
         return process.returncode, stderr, stdout
 
+    def coin(self):
+        self.run(['/usr/bin/mplayer', '-af', 'resample=48000', '/usr/local/share/caracas/smw_coin.wav'])
+
     def shutdown(self):
         self.run(['/sbin/init', '0'])
 
@@ -277,6 +280,9 @@ class Dispatcher(object):
         syslog.syslog("MODE key held down when turning off power, system is NOT shutting down.")
         self.power = True
         self.set_power_on_time()
+        self.publisher.send_string('MPD PAUSE')
+        self.screen_off()
+        self.system.coin()
 
     def neutral_mode_press(self):
         self.button_mode = 'mode'
