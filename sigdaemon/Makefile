@@ -9,6 +9,9 @@ wicked: wicked.c
 cmpd: cmpd.c
 	gcc -O2 -o cmpd cmpd.c -lzmq -lmpdclient
 
+proxy: proxy.c
+	gcc -O2 -o proxy proxy.c -lzmq
+
 clean:
 	rm sigd cmpd
 
@@ -22,7 +25,7 @@ install-card:
 	install card.py /usr/local/bin/card.py
 
 install-proxy:
-	install proxy.py /usr/local/bin/proxy.py
+	install proxy /usr/local/bin/proxy
 
 install-webservice:
 	install webservice.py /usr/local/bin/webservice.py

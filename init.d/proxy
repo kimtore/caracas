@@ -11,7 +11,7 @@
 
 # Author: Kim Tore Jensen <kim@incendio.no>
 NAME=proxy
-DAEMON=/usr/local/bin/$NAME.py
+DAEMON=/usr/local/bin/$NAME
 SCRIPTNAME=/etc/init.d/$NAME
 PIDFILE=/var/run/$NAME.pid
 
