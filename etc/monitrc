@@ -1,0 +1,48 @@
+# vi: se ft=conf:
+
+set daemon 5
+set logfile syslog facility log_daemon
+set idfile /var/lib/monit/id
+set statefile /var/lib/monit/state
+
+check process card with pidfile /run/card.pid
+    start program = "/etc/init.d/card start"
+    stop program = "/etc/init.d/card stop"
+
+check process cmpd with pidfile /run/cmpd.pid
+    start program = "/etc/init.d/cmpd start"
+    stop program = "/etc/init.d/cmpd stop"
+
+check process gpsd with pidfile /run/gpsd.pid
+    start program = "/etc/init.d/gpsd start"
+    stop program = "/etc/init.d/gpsd stop"
+
+check process gpslog with pidfile /run/gpslog.pid
+    start program = "/etc/init.d/gpslog start"
+    stop program = "/etc/init.d/gpslog stop"
+
+check process mpd with pidfile /run/mpd/pid
+    start program = "/etc/init.d/mpd start"
+    stop program = "/etc/init.d/mpd stop"
+
+check process proxy with pidfile /run/proxy.pid
+    start program = "/etc/init.d/proxy start"
+    stop program = "/etc/init.d/proxy stop"
+
+check process sigd with pidfile /run/sigd.pid
+    start program = "/etc/init.d/sigd start"
+    stop program = "/etc/init.d/sigd stop"
+
+check process sshd with pidfile /run/sshd.pid
+    start program = "/etc/init.d/ssh start"
+    stop program = "/etc/init.d/ssh stop"
+
+check process webservice with pidfile /run/webservice.pid
+    start program = "/etc/init.d/webservice start"
+    stop program = "/etc/init.d/webservice stop"
+
+check process xinetd with pidfile /run/xinetd.pid
+    start program = "/etc/init.d/xinetd start"
+    stop program = "/etc/init.d/xinetd stop"
+
+include /etc/monit/conf.d/*
