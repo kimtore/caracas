@@ -5,7 +5,7 @@ import sys
 import zmq
 import argparse
 import syslog
-import subprocess
+import subprocess32
 import datetime
 import time
 
@@ -32,6 +32,9 @@ VOLUME_STEP = 2
 # Repeat interval for repeatable commands, in milliseconds
 TICK = 100
 
+# Subprocess timeout in seconds
+SUBPROCESS_TIMEOUT = 3
+
 
 def repeatable(func):
     """
@@ -50,8 +53,8 @@ class System(object):
     def run(self, cmd):
         syslog.syslog("Running shell command: %s" % ' '.join(cmd))
         try:
-            process = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-            stdout, stderr = process.communicate()
+            process = subprocess32.Popen(cmd, stdout=subprocess32.PIPE, stderr=subprocess32.PIPE)
+            stdout, stderr = process.communicate(timeout=SUBPROCESS_TIMEOUT)
         except Exception, e:
             syslog.syslog("Failed opening subprocess with shell command: %s" % unicode(e))
             return -1, [], []
