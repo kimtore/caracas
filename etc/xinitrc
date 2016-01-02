@@ -1,0 +1,5 @@
+#!/bin/bash
+xset -dpms
+unclutter -root -idle 0 &
+wbar -bpress -idist 10 -isize 64 -zoomf 1.0 -jumpf 1.0 -pos right -vbar -nofont -nanim 0 &
+awesome

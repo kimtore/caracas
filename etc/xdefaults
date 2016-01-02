@@ -1,0 +1,14 @@
+xvkbd.windowGeometry: 720x240+0+240
+xvkbd.compact: true
+!xvkbd.Font: 6x12
+!xvkbd.xtest: false
+xvkbd.modalKeytop: true
+xvkbd.keypad: false
+xvkbd.autoRepeat: false
+xvkbd.functionkey: false
+xvkbd.jumpPointer: false
+xvkbd.jumpPointerBack: false
+xvkbd.secure: true
+xvkbd.nonexitable: true
+xvkbd.alwaysOnTop: true
+xvkbd.customization: -norwegian
