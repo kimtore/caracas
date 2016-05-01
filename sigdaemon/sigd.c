@@ -233,8 +233,10 @@ static void init_adc()
 {
     /* 3004 and 3008 are the same, with 4/8 channels */
     if (mcp3004Setup(SPI_BASE, SPI_CHAN) != 0) {
+        /* It seems that we are still able to read data even though we get a
+         * non-zero exit code here, so we print the error without terminating. */
         perror("Error initializing SPI using MCP3008 chip");
-        exit(EXIT_SPI);
+        //exit(EXIT_SPI);
     }
 }
 
