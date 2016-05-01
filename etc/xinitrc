@@ -1,0 +1,4 @@
+#!/bin/bash
+xset -dpms
+unclutter -root -idle 0 &
+awesome
