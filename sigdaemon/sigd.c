@@ -17,6 +17,7 @@
 #include <zmq.h>
 #include <syslog.h>
 
+#define DEBUG_ADC 0
 #define DEBUG 0
 
 /*
@@ -502,7 +503,7 @@ void handle_adc_events(uint8_t events, uint8_t last_events)
     uint8_t event;
     uint8_t state;
 
-#if DEBUG
+#if DEBUG_ADC
     syslog(LOG_DEBUG, "handle_adc_events: events=%d, last_events=%d, changed=%d", events, last_events, changed);
 #endif
 
@@ -540,7 +541,7 @@ static uint8_t get_adc_event()
 
     for (pin = 0; pin < SPI_PIN_MAX; pin++) {
         voltage = analogRead(SPI_BASE + SPI_CHAN + pin);
-#if DEBUG
+#if DEBUG_ADC
         syslog(LOG_DEBUG, "Voltage value from ADC channel %d pin %d: voltage=%d event=%d", SPI_CHAN, pin, voltage, analog_table[pin][voltage]);
 #endif
         events |= analog_table[pin][voltage];
