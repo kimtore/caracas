@@ -77,7 +77,7 @@ typedef unsigned short      uint16_t;
 /**
  * How long to run debouncing on the rotary click button
  */
-#define DEBOUNCE_DURATION   0.05
+#define DEBOUNCE_ITERATIONS 17
 
 /**
  * Button events
@@ -328,15 +328,22 @@ void simple_zmq_send(const char *source, const char *state)
 }
 
 /**
- * One iteration of the debounce code
+ * One iteration of the debounce code.
+ * Returns the debounced pin value 0/1, or -1 if there is no valid reading.
  */
-uint8_t debounce(uint16_t *state, uint8_t pin)
+int8_t debounce(uint16_t *state, uint8_t pin)
 {
     *state = (*state << 1) | digitalRead(pin);
 #if DEBUG
     syslog(LOG_DEBUG, "debounce %d %x", pin, *state);
 #endif
-    return (*state == 0xffff || *state == 0x0000);
+    if (*state == 0x0000) {
+        return 0;
+    } else if (*state == 0xffff) {
+        return 1;
+    } else {
+        return -1;
+    }
 }
 
 /**
@@ -344,23 +351,20 @@ uint8_t debounce(uint16_t *state, uint8_t pin)
  */
 int8_t read_debounced(uint8_t pin)
 {
+    int8_t value = -1;
     uint16_t state = 0x1010;
     struct timeval tend;
     struct timeval tstart;
-    double diff = 0;
+    uint16_t iterations = DEBOUNCE_ITERATIONS;
 
     gettimeofday(&tstart, NULL);
 
-    while (diff < DEBOUNCE_DURATION) {
-
-        if (debounce(&state, pin)) {
-            return digitalRead(pin);
+    while (--iterations != 0) {
+        value = debounce(&state, pin);
+        if (value != -1) {
+            return value;
         }
-
-        usleep(DEBOUNCE_DURATION * 1.0e+3 / 50.0);  // 50 samples at most
-        gettimeofday(&tend, NULL);
-        diff = ((double)tend.tv_sec + 1.0e-6*tend.tv_usec) - 
-               ((double)tstart.tv_sec + 1.0e-6*tstart.tv_usec);
+        usleep(1000);
     }
 
     return -1;
