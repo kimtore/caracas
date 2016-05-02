@@ -1,0 +1,13 @@
+# vi: se ft=systemd:
+
+[Unit]
+Description=ZeroMQ message proxy passing messages to and from all systems
+
+[Service]
+ExecStart=/usr/local/bin/proxy
+Restart=always
+User=caracas
+Group=caracas
+
+[Install]
+WantedBy=caracas.target

@@ -1,0 +1,13 @@
+# vi: se ft=systemd:
+
+[Unit]
+Description=GPS data logger, sending information to syslog
+
+[Service]
+ExecStart=/usr/local/bin/gpslog.py
+Restart=always
+User=caracas
+Group=caracas
+
+[Install]
+WantedBy=caracas.target

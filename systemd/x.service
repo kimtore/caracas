@@ -1,0 +1,13 @@
+# vi: se ft=systemd:
+
+[Unit]
+Description=X
+
+[Service]
+ExecStart=/usr/bin/startx
+Restart=always
+User=caracas
+Group=caracas
+
+[Install]
+WantedBy=caracas.target

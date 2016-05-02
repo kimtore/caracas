@@ -1,0 +1,11 @@
+#!/bin/bash
+#
+# This script sends a signal to the flip-flop kill switch on the Caracas power
+# board, instructing the hardware to cut power to the Raspberry Pi.
+#
+# The file should be made executable and placed into /usr/lib/systemd/system-shutdown/.
+
+if [ "$1" == "halt" ] || [ "$1" == "poweroff" ]; then
+    /usr/bin/gpio mode 4 out
+    /usr/bin/gpio write 4 1
+fi

@@ -1,0 +1,13 @@
+# vi: se ft=systemd:
+
+[Unit]
+Description=Caracas car daemon, orchestrating actions based on hardware events
+
+[Service]
+ExecStart=/usr/local/bin/card.py
+Restart=always
+User=root
+Group=root
+
+[Install]
+WantedBy=caracas.target

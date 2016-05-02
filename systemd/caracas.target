@@ -1,0 +1,6 @@
+# vi: se ft=systemd:
+
+[Unit]
+Description=All caracas services
+Requires=multi-user.target
+After=multi-user.target

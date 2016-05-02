@@ -1,0 +1,15 @@
+# vi: se ft=systemd:
+
+[Unit]
+Description=Amplifier power signal
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/amplifier on
+ExecStop=/usr/local/bin/amplifier off
+RemainAfterExit=yes
+User=root
+Group=root
+
+[Install]
+WantedBy=caracas.target

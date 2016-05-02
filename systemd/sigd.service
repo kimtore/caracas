@@ -1,0 +1,13 @@
+# vi: se ft=systemd:
+
+[Unit]
+Description=Signal daemon converting hardware events to ZeroMQ messages
+
+[Service]
+ExecStart=/usr/local/bin/sigd
+Restart=always
+User=root
+Group=root
+
+[Install]
+WantedBy=caracas.target

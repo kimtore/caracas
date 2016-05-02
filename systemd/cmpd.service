@@ -1,0 +1,14 @@
+# vi: se ft=systemd:
+
+[Unit]
+Description=ZeroMQ controlled MPD client
+
+[Service]
+ExecStart=/usr/local/bin/cmpd
+Restart=always
+User=caracas
+Group=caracas
+
+[Install]
+WantedBy=caracas.target
+Requires=mpd.service

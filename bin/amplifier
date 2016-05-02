@@ -1,0 +1,16 @@
+#!/bin/bash -e
+#
+# Switch the amplifier power output pin on or off.
+
+/usr/bin/gpio mode 0 out
+
+if [ "$1" == "on" ]; then
+    echo "Switching amplifier on."
+    /usr/bin/gpio write 0 1
+elif [ "$1" == "off" ]; then
+    echo "Switching amplifier off."
+    /usr/bin/gpio write 0 0
+else
+    echo "Unrecognized parameter '$1', use one of 'on', 'off'"
+    exit 1
+fi
