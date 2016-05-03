@@ -9,7 +9,7 @@
 #include "diagnosticscreen.hpp"
 #include "mapscreen.hpp"
 
-#define ICON_PATH "/usr/share/caracas/icons/"
+#define ICON_PATH "/usr/local/lib/caracas/icons/"
 
 class MainScreen : public QTabWidget
 {
@@ -25,5 +25,8 @@ private:
     MapScreen * map_screen;
 
     QString icon_path;
+
+    QIcon * music_icon;
     QIcon * map_icon;
+    QIcon * diagnostic_icon;
 };

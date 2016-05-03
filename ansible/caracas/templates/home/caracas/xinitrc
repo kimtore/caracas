@@ -1,3 +1,4 @@
 #!/bin/sh
+#QT_STYLE_OVERRIDE=x
 /usr/local/bin/dwm &
-/usr/local/bin/caracas-gui
+/usr/local/bin/caracas-gui -stylesheet /usr/local/lib/caracas/gui/style.css

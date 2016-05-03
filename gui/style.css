@@ -1,0 +1,25 @@
+* {
+    font-size: 2em;
+    background: black;
+    color: white;
+    border: none;
+}
+
+QTabBar {
+}
+
+QTabBar::tab {
+    font-size: 1px;
+    padding-top: 7px;
+    border: 2px solid #FCAB22;
+    border-radius: 8px;
+    width: 80px;
+    height: 73px;
+    text-align: center;
+    icon-size: 64px;
+    margin: 10px 10px 0 0;
+}
+
+QTabBar::tab:selected {
+    background: #B9791F;
+}
