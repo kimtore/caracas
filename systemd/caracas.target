@@ -3,4 +3,5 @@
 [Unit]
 Description=All caracas services
 Requires=multi-user.target
-After=multi-user.target
+Conflicts=rescue.target
+AllowIsolate=yes
