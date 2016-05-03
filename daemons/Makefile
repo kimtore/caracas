@@ -15,7 +15,7 @@ clean:
 install-cmpd: cmpd
 	install cmpd /usr/local/bin/cmpd
 
-install-proxy:
+install-proxy: proxy
 	install proxy /usr/local/bin/proxy
 
 install: install-cmpd install-proxy
