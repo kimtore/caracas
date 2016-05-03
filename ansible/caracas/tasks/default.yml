@@ -59,9 +59,13 @@
 
 - name: deploy systemd services
   command: cp /usr/local/lib/caracas/systemd/{{item}} /etc/systemd/system/{{item}}
-  with_items: "{{caracas_init_scripts}}"
+  with_items: "{{caracas_systemd_services + caracas_systemd_targets}}"
   notify:
     - reload systemd
+
+- name: enable systemd services
+  command: systemctl enable {{item}}
+  with_items: "{{caracas_systemd_services}}"
 
 - name: set caracas.target as default system target
   command: /bin/systemctl set-default caracas.target
