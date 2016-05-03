@@ -2,8 +2,14 @@
 #
 # This role installs Caracas on a Raspberry Pi.
 
-- include: "{{item}}.yml"
-  with_items:
+- include: default.yml
+  tags:
     - default
+
+- include: marble.yml
+  tags:
     - marble
+
+- include: raspberrypi.yml
+  tags:
     - raspberrypi

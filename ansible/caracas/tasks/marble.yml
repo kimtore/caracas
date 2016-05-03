@@ -6,8 +6,6 @@
 
 - name: install packages
   apt: name={{item}}
-  tags:
-    - marble
   with_items:
     - cmake
     - libgps-dev
@@ -22,17 +20,11 @@
        dest=/ssd/marble/src
        version=Applications/15.12
        depth=1
-  tags:
-    - marble
 
 - name: create marble build directory
   file: dest=/ssd/marble/build
         state=directory
-  tags:
-    - marble
 
 - name: generate marble Makefile
   command: cmake -DCMAKE_BUILD_TYPE=Release -DWITH_KF5=FALSE -DCMAKE_INSTALL_PREFIX=/usr -DQTONLY=ON -DBUILD_MARBLE_APPS=NO -DWITH_DESIGNER_PLUGIN=NO -DBUILD_MARBLE_TESTS=NO /ssd/marble/src
            chdir=/ssd/marble/build
-  tags:
-    - marble

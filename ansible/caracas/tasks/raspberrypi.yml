@@ -6,14 +6,10 @@
   lineinfile: dest=/boot/config.txt
               line="max_usb_current=1"
               regexp="^max_usb_current"
-  tags:
-    - raspberrypi
 
 - name: configure HDMI monitor output
   lineinfile: dest=/boot/config.txt
               line="{{item}}"
-  tags:
-    - raspberrypi
   with_items:
     - "hdmi_force_hotplug=1"
     - "hdmi_group=2"
@@ -24,27 +20,19 @@
 - name: enable SPI in kernel
   lineinfile: dest=/boot/config.txt
               line="dtparam=spi=on"
-  tags:
-    - raspberrypi
 
 - name: configure gpsd to speak with serial GPS receiver
   lineinfile: dest=/etc/default/gpsd
               line="DEVICES=/dev/ttyAMA0"
               regexp="^DEVICES"
-  tags:
-    - raspberrypi
 
 - name: install WiringPI
   apt: name=wiringpi
-  tags:
-    - raspberrypi
 
 - name: compile and install sigd
   command: "{{item}}"
   args:
     chdir: /usr/local/lib/caracas/daemons/sigd
-  tags:
-    - raspberrypi
   with_items:
     - make
     - make install
@@ -53,5 +41,3 @@
   file: dest=/lib/systemd/system-shutdown/suicide
         src=/usr/local/lib/caracas/bin/suicide
         state=link
-  tags:
-    - raspberrypi
