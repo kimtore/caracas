@@ -1,0 +1,11 @@
+# vi: se ft=ansible:
+
+caracas_init_scripts:
+  - amplifier.service
+  - caracas.target
+  - card.service
+  - cmpd.service
+  - gpslog.service
+  - proxy.service
+  - sigd.service
+  - x.service

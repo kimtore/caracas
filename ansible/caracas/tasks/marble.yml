@@ -1,0 +1,38 @@
+# vi: se ft=ansible:
+#
+# This role installs the Git version of the Marble library. It does not compile
+# or install the library, that must be done using "make" and "make install" in
+# the build directory.
+
+- name: install packages
+  apt: name={{item}}
+  tags:
+    - marble
+  with_items:
+    - cmake
+    - libgps-dev
+    - libqt5positioning5
+    - libqt5positioning5-plugins
+    - libqt5svg5-dev
+    - libqt5webkit5-dev
+    - qtscript5-dev
+
+- name: checkout marble repository
+  git: repo=git://anongit.kde.org/marble
+       dest=/ssd/marble/src
+       version=Applications/15.12
+       depth=1
+  tags:
+    - marble
+
+- name: create marble build directory
+  file: dest=/ssd/marble/build
+        state=directory
+  tags:
+    - marble
+
+- name: generate marble Makefile
+  command: cmake -DCMAKE_BUILD_TYPE=Release -DWITH_KF5=FALSE -DCMAKE_INSTALL_PREFIX=/usr -DQTONLY=ON -DBUILD_MARBLE_APPS=NO -DWITH_DESIGNER_PLUGIN=NO -DBUILD_MARBLE_TESTS=NO /ssd/marble/src
+           chdir=/ssd/marble/build
+  tags:
+    - marble

@@ -1,0 +1,57 @@
+# vi: se ft=ansible:
+#
+# This role deploys changes that only works on an actual Raspberry Pi.
+
+- name: allow usb ports to draw up to 1.2A
+  lineinfile: dest=/boot/config.txt
+              line="max_usb_current=1"
+              regexp="^max_usb_current"
+  tags:
+    - raspberrypi
+
+- name: configure HDMI monitor output
+  lineinfile: dest=/boot/config.txt
+              line="{{item}}"
+  tags:
+    - raspberrypi
+  with_items:
+    - "hdmi_force_hotplug=1"
+    - "hdmi_group=2"
+    - "hdmi_mode=1"
+    - "hdmi_mode=87"
+    - "hdmi_cvt=800 480 60 6 0 0 0"
+
+- name: enable SPI in kernel
+  lineinfile: dest=/boot/config.txt
+              line="dtparam=spi=on"
+  tags:
+    - raspberrypi
+
+- name: configure gpsd to speak with serial GPS receiver
+  lineinfile: dest=/etc/default/gpsd
+              line="DEVICES=/dev/ttyAMA0"
+              regexp="^DEVICES"
+  tags:
+    - raspberrypi
+
+- name: install WiringPI
+  apt: name=wiringpi
+  tags:
+    - raspberrypi
+
+- name: compile and install sigd
+  command: "{{item}}"
+  args:
+    chdir: /usr/local/lib/caracas/daemons/sigd
+  tags:
+    - raspberrypi
+  with_items:
+    - make
+    - make install
+
+- name: run the suicide program when shutting down
+  file: dest=/lib/systemd/system-shutdown/suicide
+        src=/usr/local/lib/caracas/bin/suicide
+        state=link
+  tags:
+    - raspberrypi

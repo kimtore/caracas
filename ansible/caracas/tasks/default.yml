@@ -1,0 +1,111 @@
+# vi: se ft=ansible:
+#
+# This role installs the base setup for Caracas, including packages, Python
+# modules, users and groups, systemd services, a window manager, and
+# miscellaneous configuration.
+
+- name: checkout caracas repository
+  git: repo=https://github.com/ambientsound/caracas.git
+       dest=/usr/local/lib/caracas
+
+- name: install needed packages
+  apt: name={{item}}
+  with_items:
+    - apt-transport-https
+    - gpsd
+    - gpsd-clients
+    - iptables
+    - libmpdclient-dev
+    - libxft-dev
+    - libxinerama-dev
+    - libzmq3-dev
+    - mpc
+    - mpd
+    - python
+    - python-dev
+    - python-gps
+    - python-pip
+    - python-zmq
+    - qt5-default
+    - rsyslog
+    - xinit
+
+- name: install subprocess32 python module
+  pip: name=subprocess32
+
+- name: create caracas group
+  group: name=caracas
+         system=true
+
+- name: create caracas user
+  user: name=caracas
+        group=caracas
+        shell=/bin/bash
+        system=true
+
+- name: set up .xinitrc for the caracas user
+  template: dest=~caracas/.xinitrc
+            src=home/caracas/xinitrc
+
+- name: allow anyone to start the X server
+  lineinfile: dest=/etc/X11/Xwrapper.config
+              line="allowed_users=anybody"
+              regexp="^allowed_users="
+
+- name: configure gpsd to poll all the time
+  lineinfile: dest=/etc/default/gpsd
+              line='GPSD_OPTIONS="-n"'
+              regexp="^GPSD_OPTIONS"
+
+- name: deploy systemd services
+  command: cp /usr/local/lib/caracas/systemd/{{item}} /etc/systemd/system/{{item}}
+  with_items: "{{caracas_init_scripts}}"
+  notify:
+    - reload systemd
+
+- name: set caracas.target as default system target
+  command: /bin/systemctl set-default caracas.target
+
+- name: checkout dwm
+  git: repo=http://git.suckless.org/dwm
+       dest=/usr/local/lib/dwm
+       force=yes
+
+- name: configure dwm border width
+  lineinfile: dest=/usr/local/lib/dwm/config.def.h
+              line="static const unsigned int borderpx = 0;"
+              regexp="^static const unsigned int borderpx"
+
+- name: configure dwm topbar
+  lineinfile: dest=/usr/local/lib/dwm/config.def.h
+              line="static const int showbar = 0;"
+              regexp="^static const int showbar"
+
+- name: compile and install dwm
+  command: "{{item}}"
+  args:
+    chdir: /usr/local/lib/dwm
+  with_items:
+    - make
+    - make install
+
+- name: link the amplifier and suicide scripts
+  file: dest=/usr/local/bin/{{item}}
+        src=/usr/local/lib/caracas/bin/{{item}}
+        state=link
+  with_items:
+    - amplifier
+    - suicide
+
+- name: compile and install daemons
+  command: "{{item}}"
+  args:
+    chdir: /usr/local/lib/caracas/daemons
+  with_items:
+    - make
+    - make install
+
+- name: install test utilities
+  command: make install
+  args:
+    chdir: /usr/local/lib/caracas/utils

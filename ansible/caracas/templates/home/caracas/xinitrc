@@ -1,0 +1,3 @@
+#!/bin/sh
+/usr/local/bin/dwm &
+/usr/local/bin/caracas-gui

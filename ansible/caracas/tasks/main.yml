@@ -1,0 +1,9 @@
+# vi: se ft=ansible:
+#
+# This role installs Caracas on a Raspberry Pi.
+
+- include: "{{item}}.yml"
+  with_items:
+    - default
+    - marble
+    - raspberrypi
