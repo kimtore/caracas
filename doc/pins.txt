@@ -8,6 +8,7 @@ GPIO pin usage
 20  GND                         header, rotary click
 22  GPIO25              INPUT   header, rotary click
 24  SPI CS              SPI     board
+40  GPIO29              OUTPUT  display brightness 100Hz 3.3V PWM signal
 
 7   GPCLK0              INPUT   gps, pulse per second
 11  Amplifier power     OUTPUT  board, amplifier power switch

@@ -2,6 +2,7 @@
 
 caracas_systemd_services:
   - amplifier.service
+  - backlightd.service
   - card.service
   - cmpd.service
   - gpslog.service

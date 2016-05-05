@@ -37,6 +37,14 @@
     - make
     - make install
 
+- name: compile and install backlightd
+  command: "{{item}}"
+  args:
+    chdir: /usr/local/lib/caracas/daemons/backlightd
+  with_items:
+    - make
+    - make install
+
 - name: run the suicide program when shutting down
   file: dest=/lib/systemd/system-shutdown/suicide
         src=/usr/local/lib/caracas/bin/suicide

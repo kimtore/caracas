@@ -1,0 +1,13 @@
+# vi: se ft=systemd:
+
+[Unit]
+Description=Display brightness daemon
+
+[Service]
+ExecStart=/usr/local/bin/backlightd
+Restart=always
+User=root
+Group=root
+
+[Install]
+WantedBy=caracas.target
