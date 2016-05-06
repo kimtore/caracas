@@ -113,3 +113,7 @@
   command: make install
   args:
     chdir: /usr/local/lib/caracas/utils
+
+- name: deploy mpd configuration
+  template: dest=/etc/mpd.conf
+            src=etc/mpd.conf
