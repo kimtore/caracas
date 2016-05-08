@@ -191,7 +191,7 @@ int main(int argc, char **argv)
 
     while (opts.running) {
         err = zmq_recv(zmq_sock, buf, 128, 0);
-        if (err == -1) {
+        if (err < 0) {
             syslog(LOG_ERR, "Failed to receive data from ZeroMQ publisher: %s", zmq_strerror(errno));
             break;
         }
