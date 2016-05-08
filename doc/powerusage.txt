@@ -1,6 +1,0 @@
-device          power   voltage amps
-------------------------------------
-raspberrypi     5W      5V      1A
-ssd             4.3W    5V      0.86A
-
-total           9.3W    5V      1.86A
