@@ -12,10 +12,16 @@ proxy: proxy.c
 clean:
 	rm -f cmpd proxy
 
+install-card:
+	install card.py /usr/local/bin/card.py
+
+install-gpslog:
+	install gpslog.py /usr/local/bin/gpslog.py
+
 install-cmpd: cmpd
 	install cmpd /usr/local/bin/cmpd
 
 install-proxy: proxy
 	install proxy /usr/local/bin/proxy
 
-install: install-cmpd install-proxy
+install: install-cmpd install-proxy install-card install-gpslog
