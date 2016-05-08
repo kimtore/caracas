@@ -13,10 +13,6 @@ import time
 # Touch this file to prevent shutdown by Card in any circumstance
 SHUTDOWN_PREVENT_FILE = '/tmp/keepalive'
 
-# Battery state constants
-BATTERY_CHARGING = 0
-BATTERY_FULL = 1
-
 # ZeroMQ publisher socket
 PUB_SOCK = "tcp://localhost:9090"
 
@@ -24,10 +20,13 @@ PUB_SOCK = "tcp://localhost:9090"
 SUB_SOCK = "tcp://localhost:9080"
 
 # How many seconds to keep the system alive during loss of ignition power
-POWER_TIMEOUT = 2
+POWER_TIMEOUT = 3600
 
 # Delta MPD volume each time a volume change event is triggered
 VOLUME_STEP = 2
+
+# Delta backlight intensity each time a backlight change event is triggered
+BACKLIGHT_STEP = 5
 
 # Repeat interval for repeatable commands, in milliseconds
 TICK = 100
@@ -61,14 +60,8 @@ class System(object):
         syslog.syslog("Shell command finished with return code %d" % process.returncode)
         return process.returncode, stderr, stdout
 
-    def coin(self):
-        self.run(['/usr/bin/mplayer', '-af', 'resample=48000', '/usr/local/share/caracas/smw_coin.wav'])
-
     def shutdown(self):
-        self.run(['/sbin/init', '0'])
-
-    def android_toggle_screen(self):
-        self.run(['/usr/local/bin/adb', 'shell', 'input', 'keyevent', '26'])
+        self.run(['/bin/systemctl', 'halt'])
 
 
 class Dispatcher(object):
@@ -77,15 +70,15 @@ class Dispatcher(object):
     """
     def __init__(self, system):
         self.system = system
-        self.battery_state = BATTERY_FULL  # assume Android battery full at boot
-        self.screen = True  # assume screen on at boot
         self.power = True  # assume power on at boot
         self.power_on_time = None
         self.hibernated = False
+        self.display_intensity = 100
+        self.target_display_intensity = 100
         self.set_power_on_time()
         self.button_mode = 'neutral'
         self.mode_dispatched = True
-        self.is_shutting_down = True
+        self.is_shutting_down = False
         self.init_zeromq()
 
     def init_zeromq(self):
@@ -102,8 +95,6 @@ class Dispatcher(object):
     def can_shutdown(self):
         if self.power or self.is_shutting_down:
             return False
-        if self.battery_state == BATTERY_CHARGING:
-            return False
         if self.is_keepalive():
             return False
         return True
@@ -118,9 +109,7 @@ class Dispatcher(object):
             return False
         if self.power or self.is_shutting_down:
             return False
-        if self.can_shutdown():
-            return False
-        return self.shutdown_timed_out()
+        return True
 
     def needs_thaw(self):
         return self.hibernated and self.power and not self.is_shutting_down
@@ -143,70 +132,48 @@ class Dispatcher(object):
     def is_keepalive(self):
         return os.path.exists(SHUTDOWN_PREVENT_FILE)
 
-    def is_screen_on(self):
-        return self.screen == True
+    def fade_screen(self, target):
+        if target < 0:
+            target = 0
+        elif target > 100:
+            target = 100
+        if target == self.display_intensity:
+            return
+        if target != 0:
+            self.target_display_intensity = target
+        syslog.syslog('Fading display intensity to %d.' % target)
+        sign = 1 if target > self.display_intensity else -1
+        for intensity in xrange(self.display_intensity, target + sign, sign):
+            self.publisher.send_string('BACKLIGHT %d' % intensity)
+        self.display_intensity = target
+
+    def step_screen(self, step):
+        target = self.display_intensity + step
+        self.fade_screen(target)
 
     def screen_on(self):
-        syslog.syslog('Turning screen on.')
-        if not self.is_screen_on():
-            self.system.android_toggle_screen()
+        self.fade_screen(self.target_display_intensity)
 
     def screen_off(self):
-        syslog.syslog('Turning screen off.')
-        if self.is_screen_on():
-            self.system.android_toggle_screen()
+        self.fade_screen(0)
+
+    def screen_toggle(self):
+        if self.display_intensity == 0:
+            self.screen_on()
+        else:
+            self.screen_off()
 
     def hibernate(self):
         syslog.syslog('Putting system in hibernation mode.')
-        self.screen_off()
         self.publisher.send_string('MPD PAUSE')
+        self.screen_off()
         self.hibernated = True
 
     def thaw(self):
         syslog.syslog('Restoring system from hibernation mode.')
-        self.screen_on()
         self.publisher.send_string('MPD UNPAUSE')
+        self.screen_on()
         self.hibernated = False
-
-    #
-    # Screen events
-    #
-    def neutral_screen_on(self):
-        self.screen = True
-        syslog.syslog('Android screen was reportedly switched on.')
-
-    def neutral_screen_off(self):
-        self.screen = False
-        syslog.syslog('Android screen was reportedly switched off.')
-
-    def mode_screen_on(self):
-        return self.neutral_screen_on()
-
-    def mode_screen_off(self):
-        return self.neutral_screen_off()
-
-    #
-    # Battery events
-    #
-    def neutral_battery_charging(self):
-        if self.battery_state != BATTERY_CHARGING:
-            syslog.syslog('Android battery is now charging.')
-            if not self.power:
-                syslog.syslog('System shutdown will be deferred until Android battery is full.')
-        self.battery_state = BATTERY_CHARGING
-
-    def neutral_battery_full(self):
-        if self.battery_state != BATTERY_FULL:
-            syslog.syslog('Android battery is now full.')
-            if not self.power:
-                syslog.syslog('System shutdown is now re-enabled.')
-        self.battery_state = BATTERY_FULL
-
-    def mode_battery_charging(self):
-        return self.neutral_battery_charging()
-
-    def mode_battery_full(self):
-        return self.neutral_battery_full()
 
     #
     # Rotary events
@@ -215,13 +182,13 @@ class Dispatcher(object):
         self.publisher.send_string('MPD VOLUME STEP %d' % -VOLUME_STEP)
 
     def mode_rotary_left(self):
-        self.publisher.send_string('MPD PREV')
+        self.step_screen(-BACKLIGHT_STEP)
 
     def neutral_rotary_right(self):
         self.publisher.send_string('MPD VOLUME STEP %d' % VOLUME_STEP)
 
     def mode_rotary_right(self):
-        self.publisher.send_string('MPD NEXT')
+        self.step_screen(BACKLIGHT_STEP)
 
     def neutral_rotary_press(self):
         self.publisher.send_string('MPD PLAY OR PAUSE')
@@ -270,7 +237,7 @@ class Dispatcher(object):
         if self.can_shutdown():
             syslog.syslog("Shutting down in %d seconds unless power is restored..." % POWER_TIMEOUT)
         else:
-            syslog.syslog("Shutdown is temporarily disabled due to battery level or other internal state.")
+            syslog.syslog("Shutdown is temporarily disabled because internal state prevents a shutdown.")
 
     def mode_power_on(self):
         return self.neutral_power_on()
@@ -280,12 +247,7 @@ class Dispatcher(object):
         Shutting down the power when the MODE key is held down prevents the
         hardware from being turned off at all.
         """
-        syslog.syslog("MODE key held down when turning off power, system is NOT shutting down.")
-        self.power = True
-        self.set_power_on_time()
-        self.publisher.send_string('MPD PAUSE')
-        self.screen_off()
-        self.system.coin()
+        syslog.syslog("Ignition power has been lost while MODE key is held down; will behave as power is still on.")
 
     def neutral_mode_press(self):
         self.button_mode = 'mode'
@@ -294,7 +256,7 @@ class Dispatcher(object):
         self.button_mode = 'neutral'
         if not self.mode_dispatched:
             syslog.syslog('Driver requested screen toggle')
-            self.system.android_toggle_screen()
+            self.screen_toggle()
 
     #
     # Dispatch message arrays to functions
@@ -340,8 +302,6 @@ class Card(object):
         self.context = zmq.Context()
         self.subscriber = self.context.socket(zmq.SUB)
         self.subscriber.connect(PUB_SOCK)
-        self.subscriber.setsockopt_string(zmq.SUBSCRIBE, u'BATTERY')
-        self.subscriber.setsockopt_string(zmq.SUBSCRIBE, u'SCREEN')
         self.subscriber.setsockopt_string(zmq.SUBSCRIBE, u'POWER')
         self.subscriber.setsockopt_string(zmq.SUBSCRIBE, u'MODE')
         self.subscriber.setsockopt_string(zmq.SUBSCRIBE, u'ARROW')
