@@ -16,7 +16,6 @@ QTabBar::tab {
     width: 80px;
     height: 73px;
     text-align: center;
-    icon-size: 64px;
     margin: 10px 10px 0 0;
 }
 
