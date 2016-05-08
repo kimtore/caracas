@@ -142,7 +142,8 @@ class Dispatcher(object):
         if target != 0:
             self.target_display_intensity = target
         syslog.syslog('Fading display intensity to %d.' % target)
-        for intensity in xrange(self.display_intensity, target + 1):
+        sign = 1 if target > self.display_intensity else -1
+        for intensity in xrange(self.display_intensity, target + sign, sign):
             self.publisher.send_string('BACKLIGHT %d' % intensity)
         self.display_intensity = target
 
