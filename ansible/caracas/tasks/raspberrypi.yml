@@ -49,3 +49,7 @@
   file: dest=/lib/systemd/system-shutdown/suicide
         src=/usr/local/lib/caracas/bin/suicide
         state=link
+
+- name: blacklist the bcm2385 sound module
+  copy: dest=/etc/modprobe.d/caracas.conf
+        content="blacklist snd_bcm2835\n"
