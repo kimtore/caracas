@@ -11,16 +11,23 @@
 - name: install needed packages
   apt: name={{item}}
   with_items:
+    - alsa-utils
     - apt-transport-https
+    - firmware-linux-free
     - gpsd
     - gpsd-clients
     - iptables
+    - libasound2-plugin-equal
     - libmpdclient-dev
+    - libtag1-dev
     - libxft-dev
     - libxinerama-dev
     - libzmq3-dev
+    - mosh
     - mpc
     - mpd
+    - mplayer
+    - ncmpcpp
     - python
     - python-dev
     - python-gps
@@ -28,6 +35,10 @@
     - python-zmq
     - qt5-default
     - rsyslog
+    - usb-modeswitch
+    - usb-modeswitch-data
+    - usbutils
+    - x11-xserver-utils
     - xinit
 
 - name: install subprocess32 python module
