@@ -1,6 +1,8 @@
 #include <QApplication>
+#include <QFont>
 
 #include "mainscreen.hpp"
+
 
 int main(int argc, char **argv)
 {

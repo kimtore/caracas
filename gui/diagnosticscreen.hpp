@@ -5,6 +5,14 @@
 #include <QTabWidget>
 #include <QLabel>
 #include <QTimer>
+#include <QSvgRenderer>
+#include <QPixmap>
+#include <QPainter>
+
+
+#ifndef _GUI_DIAGNOSTICSCREEN_H_
+#define _GUI_DIAGNOSTICSCREEN_H_
+
 
 class DiagnosticScreen : public QWidget
 {
@@ -26,4 +34,10 @@ private:
     QVBoxLayout * layout;
     QLabel * title;
     QLabel * uptime;
+    QSvgRenderer * renderer;
+    QPixmap * logo;
+    QPainter * painter;
 };
+
+
+#endif /* _GUI_DIAGNOSTICSCREEN_H_ */

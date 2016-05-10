@@ -8,6 +8,8 @@
 
 #include "diagnosticscreen.hpp"
 #include "mapscreen.hpp"
+#include "musicscreen.hpp"
+#include "mpdclient.hpp"
 
 #define ICON_PATH "/usr/local/lib/caracas/icons/"
 
@@ -21,7 +23,7 @@ public:
 private:
 
     DiagnosticScreen * diagnostic_screen;
-    QWidget * music_screen;
+    MusicScreen * music_screen;
     MapScreen * map_screen;
 
     QString icon_path;

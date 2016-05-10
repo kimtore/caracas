@@ -50,20 +50,26 @@ DiagnosticScreen::format_uptime(char * buf, double up)
     minutes = seconds / 60;
     seconds %= 60;
 
-    sprintf(buf, "%d days  %d hours  %d minutes  %d seconds", days, hours, minutes, seconds);
+    sprintf(buf, "%d days %d hours %d minutes %d seconds", days, hours, minutes, seconds);
 }
 
 DiagnosticScreen::DiagnosticScreen()
 {
     layout = new QVBoxLayout(this);
 
+    renderer = new QSvgRenderer(QString("/usr/local/lib/caracas/gui/caracas.svg"));
+    logo = new QPixmap(QSize(500, 90));
+    painter = new QPainter(logo);
+    renderer->render(painter);
+
     title = new QLabel;
-    title->setText("<font size=18><i>Caracas</i></font>");
-    title->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
+    title->setPixmap(*logo);
+    title->setAlignment(Qt::AlignCenter);
     layout->addWidget(title);
 
     uptime = new QLabel;
-    uptime->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
+    uptime->setAlignment(Qt::AlignCenter);
+    uptime->setObjectName("uptime");
     layout->addWidget(uptime);
     read_and_set_uptime();
 

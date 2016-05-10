@@ -1,14 +1,82 @@
 * {
-    font-size: 2em;
+    font: normal 18pt FreeSans;
     background: black;
-    color: white;
-    border: none;
+    color: #ddd;
+    border-color: #ddd;
 }
 
-QTabBar {
+#music_title {
+    font-size: 28pt;
+    font-weight: bold;
 }
 
-QTabBar::tab {
+#music_artist {
+    font-size: 22pt;
+}
+
+#music_album, #music_track, #music_year {
+    font-size: 20pt;
+    color: #aaa;
+}
+
+#music_elapsed {
+    font-size: 22pt;
+    color: orange;
+}
+
+QListView {
+    font-size: 28pt;
+    padding-left: 15px;
+}
+
+QListView::item {
+    padding: 10px 0;
+}
+
+QListView::item:selected {
+    background: orange;
+    color: black;
+}
+
+QScrollBar:vertical {
+    border: 0;
+    background: black;
+    width: 80px;
+    margin: 80px 0 80px 0;
+}
+
+QScrollBar::handle:vertical {
+    background: #222;
+    min-height: 80px;
+}
+
+QScrollBar::add-line:vertical {
+    border: 0;
+    background: orange;
+    height: 80px;
+    subcontrol-position: bottom;
+    subcontrol-origin: margin;
+}
+
+QScrollBar::sub-line:vertical {
+    border: 0;
+    background: orange;
+    height: 80px;
+    subcontrol-position: top;
+    subcontrol-origin: margin;
+}
+
+QScrollBar::up-arrow:vertical, QScrollBar::down-arrow:vertical {
+    width: 36px;
+    height: 36px;
+    background: black;
+}
+
+QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {
+    background: none;
+}
+
+#main_menu > QTabBar::tab {
     font-size: 1px;
     padding-top: 7px;
     border: 2px solid #FCAB22;
@@ -16,9 +84,35 @@ QTabBar::tab {
     width: 80px;
     height: 73px;
     text-align: center;
-    margin: 10px 10px 0 0;
+    margin: 10px 10px 0 10px;
 }
 
-QTabBar::tab:selected {
+#main_menu > QTabBar::tab:selected {
     background: #B9791F;
+}
+
+#music_screen > QTabBar::tab {
+    padding: 15px 20px;
+    color: #777;
+    font-size: 18pt;
+    border: 0;
+}
+
+#music_screen > QTabBar::tab:selected {
+    color: white;
+}
+
+QProgressBar {
+    background: #222;
+    color: white;
+    text-align: center;
+}
+
+QProgressBar::chunk {
+    background: orange;
+    color: black;
+}
+
+#uptime {
+    font-size: 26pt;
 }
