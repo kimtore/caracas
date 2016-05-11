@@ -21,7 +21,7 @@
 
 #music_elapsed {
     font-size: 22pt;
-    color: orange;
+    color: #B9791F;
 }
 
 QListView {
@@ -34,7 +34,7 @@ QListView::item {
 }
 
 QListView::item:selected {
-    background: orange;
+    background: #B9791F;
     color: black;
 }
 
@@ -52,7 +52,7 @@ QScrollBar::handle:vertical {
 
 QScrollBar::add-line:vertical {
     border: 0;
-    background: orange;
+    background: #B9791F;
     height: 80px;
     subcontrol-position: bottom;
     subcontrol-origin: margin;
@@ -60,7 +60,7 @@ QScrollBar::add-line:vertical {
 
 QScrollBar::sub-line:vertical {
     border: 0;
-    background: orange;
+    background: #B9791F;
     height: 80px;
     subcontrol-position: top;
     subcontrol-origin: margin;
@@ -79,7 +79,7 @@ QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {
 #main_menu > QTabBar::tab {
     font-size: 1px;
     padding-top: 7px;
-    border: 2px solid #FCAB22;
+    border: 2px solid #B9791F;
     border-radius: 8px;
     width: 80px;
     height: 73px;
@@ -104,15 +104,14 @@ QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {
 
 QProgressBar {
     background: #222;
-    color: white;
+    color: black;
     text-align: center;
 }
 
 QProgressBar::chunk {
-    background: orange;
-    color: black;
+    background: #B9791F;
 }
 
 #uptime {
-    font-size: 26pt;
+    font-size: 20pt;
 }

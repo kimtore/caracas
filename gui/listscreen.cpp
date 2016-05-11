@@ -6,4 +6,5 @@
 ListScreen::ListScreen()
 {
     verticalScrollBar()->setSingleStep(3);
+    setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 }

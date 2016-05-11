@@ -42,6 +42,7 @@ PlayerScreen::PlayerScreen()
 
     /* Set up albumart widget */
     albumart_widget = new AlbumArtWidget;
+    albumart_widget->setObjectName("music_album_art");
 
     /* Draw blank albumart */
     albumart_widget->reset();
@@ -51,18 +52,21 @@ PlayerScreen::PlayerScreen()
     info_layout = new QHBoxLayout();
     song_layout = new QVBoxLayout();
 
+    layout->addWidget(title);
+    layout->addSpacing(10);
     layout->addLayout(info_layout);
     layout->addSpacing(20);
     layout->addWidget(volume);
+    layout->setAlignment(title, Qt::AlignLeft | Qt::AlignTop);
+    layout->setAlignment(volume, Qt::AlignBottom);
 
     info_layout->addWidget(albumart_widget);
+    info_layout->setAlignment(Qt::AlignTop);
     info_layout->addSpacing(30);
     info_layout->addLayout(song_layout);
     info_layout->setAlignment(albumart_widget, Qt::AlignLeft | Qt::AlignTop);
     info_layout->setAlignment(song_layout, Qt::AlignLeft | Qt::AlignTop);
 
-    song_layout->addWidget(title);
-    song_layout->addSpacing(5);
     song_layout->addWidget(artist);
     song_layout->addSpacing(20);
     song_layout->addWidget(album);

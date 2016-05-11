@@ -5,6 +5,7 @@
 MusicScreen::MusicScreen()
 {
     setObjectName("music_screen");
+    setUsesScrollButtons(false);
 
     /* Set up MPD client */
     mpd_client = new MPDClient();
