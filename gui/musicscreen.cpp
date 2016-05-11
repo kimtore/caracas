@@ -9,7 +9,6 @@ MusicScreen::MusicScreen()
 
     /* Set up MPD client */
     mpd_client = new MPDClient();
-    mpd_client->start();
 
     /* Set up player screen */
     player_screen = new PlayerScreen;
@@ -41,6 +40,9 @@ MusicScreen::MusicScreen()
                      mpd_client, &MPDClient::get_album_list);
     QObject::connect(this, &MusicScreen::play_album,
                      mpd_client, &MPDClient::play_album);
+
+    /* Start MPD client late to avoid updates before GUI is ready */
+    mpd_client->start();
 }
 
 void
