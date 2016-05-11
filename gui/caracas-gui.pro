@@ -12,6 +12,6 @@ HEADERS = mainscreen.hpp mapscreen.hpp diagnosticscreen.hpp musicscreen.hpp mpdc
 SOURCES = mainscreen.cpp mapscreen.cpp diagnosticscreen.cpp main.cpp musicscreen.cpp mpdclient.cpp time.cpp tagfile.cpp albumartwidget.cpp playerscreen.cpp listscreen.cpp
 
 # Install
-caracas-gui.path = /usr/local/src/
+caracas-gui.path = /usr/local/bin/
 caracas-gui.files = caracas-gui
 INSTALLS += caracas-gui
