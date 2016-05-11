@@ -1,3 +1,6 @@
 #!/bin/sh
 /usr/local/bin/dwm &
+/usr/bin/unclutter -idle 0 &
+/usr/bin/xset -dpms
+/usr/bin/xset s off
 /usr/local/bin/caracas-gui -stylesheet /usr/local/lib/caracas/gui/style.css

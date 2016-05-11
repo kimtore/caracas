@@ -35,6 +35,7 @@
     - python-zmq
     - qt5-default
     - rsyslog
+    - unclutter
     - usb-modeswitch
     - usb-modeswitch-data
     - usbutils
