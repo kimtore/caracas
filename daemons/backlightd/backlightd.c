@@ -11,7 +11,6 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
-#include <signal.h>
 #include <wiringPi.h>
 #include <mcp3004.h>
 #include <zmq.h>
@@ -121,20 +120,10 @@ static void clear_opts(struct opts_t *o)
 }
 
 /**
- * Catch signals from operating system.
- */
-void signal_handler(int s)
-{
-    syslog(LOG_NOTICE, "Caught signal %d", s);
-    opts.running = 0;
-}
-
-/**
  * Main program.
  */
 int main(int argc, char **argv)
 {
-    struct sigaction act;
     int err;
     char buf[128];
     int16_t percentage;
@@ -179,12 +168,6 @@ int main(int argc, char **argv)
 
     init_pin();
 
-    act.sa_handler = signal_handler;
-    act.sa_flags = 0;
-    sigemptyset(&act.sa_mask);
-    sigaction(SIGTERM, &act, NULL);
-    sigaction(SIGINT, &act, NULL);
-
     clear_opts(&opts);
 
     syslog(LOG_NOTICE, "Backlight daemon started.");
@@ -196,13 +179,13 @@ int main(int argc, char **argv)
             break;
         }
         buf[err] = '\0';
-        syslog(LOG_DEBUG, "Received ZeroMQ message: %s", buf);
+        // syslog(LOG_DEBUG, "Received ZeroMQ message: %s", buf);
         percentage = percentage_from_message(buf);
         if (percentage < 0 || percentage > 100) {
             continue;
         }
         value = percentage_to_value(percentage);
-        syslog(LOG_INFO, "Setting backlight to %d%% (value %d)", percentage, value);
+        // syslog(LOG_INFO, "Setting backlight to %d%% (value %d)", percentage, value);
         softPwmWrite(PIN_BACKLIGHT_PWM, value);
     }
 
