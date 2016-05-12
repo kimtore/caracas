@@ -28,6 +28,7 @@
     - mpd
     - mplayer
     - ncmpcpp
+    - pps-tools
     - python
     - python-dev
     - python-gps

@@ -21,6 +21,10 @@
   lineinfile: dest=/boot/config.txt
               line="dtparam=spi=on"
 
+- name: enable pulse-per-second from GPS board directly in kernel
+  lineinfile: dest=/boot/config.txt
+              line="dtoverlay=pps-gpio,gpiopin=4"
+
 - name: configure gpsd to speak with serial GPS receiver
   lineinfile: dest=/etc/default/gpsd
               line="DEVICES=/dev/ttyAMA0"
@@ -53,3 +57,7 @@
 - name: blacklist the bcm2385 sound module
   copy: dest=/etc/modprobe.d/caracas.conf
         content="blacklist snd_bcm2835\n"
+
+- name: load pps-gpio module on boot
+  copy: dest=/etc/modprobe.d/pps.conf
+        content="pps-gpio\n"
