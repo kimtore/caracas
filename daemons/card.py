@@ -20,7 +20,7 @@ PUB_SOCK = "tcp://localhost:9090"
 SUB_SOCK = "tcp://localhost:9080"
 
 # How many seconds to keep the system alive during loss of ignition power
-POWER_TIMEOUT = 3600
+POWER_TIMEOUT = 900
 
 # Delta MPD volume each time a volume change event is triggered
 VOLUME_STEP = 2
