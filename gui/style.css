@@ -115,3 +115,20 @@ QProgressBar::chunk {
 #uptime {
     font-size: 20pt;
 }
+
+QPushButton {
+    width: 80px;
+    height: 80px;
+    background: solid #B9791F;
+    color: black;
+}
+
+QPushButton:unchecked {
+    background: black;
+    color: white;
+}
+
+QPushButton:checked {
+    background: green;
+    color: white;
+}
