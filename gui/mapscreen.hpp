@@ -24,6 +24,7 @@ public:
     MapScreen();
 
     QString direction_from_heading(qreal heading);
+    QString latlon_to_string(qreal n);
 
 public slots:
     void position_changed(GeoDataCoordinates position);
@@ -39,8 +40,7 @@ private:
     MarbleWidget * map_widget;
     QLabel * speed_widget;
     QLabel * direction_widget;
-    QLabel * lat_widget;
-    QLabel * lon_widget;
+    QLabel * coords_widget;
 
     QPushButton auto_homing_button;
     QPushButton zoom_in_widget;

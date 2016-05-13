@@ -68,19 +68,15 @@ MapScreen::MapScreen()
 
     /* Direction widget */
     direction_widget = new QLabel();
-    direction_widget->setAlignment(Qt::AlignBottom);
+    direction_widget->setAlignment(Qt::AlignBottom | Qt::AlignCenter);
     info_layout->addWidget(direction_widget);
 
-    /* Latitude widget */
-    lat_widget = new QLabel();
-    lat_widget->setAlignment(Qt::AlignBottom | Qt::AlignRight);
-    info_layout->addWidget(lat_widget);
+    /* Coordinate widget */
+    coords_widget = new QLabel();
+    coords_widget->setAlignment(Qt::AlignBottom | Qt::AlignRight);
+    info_layout->addWidget(coords_widget);
 
-    /* Longitude widget */
-    lon_widget = new QLabel();
-    lon_widget->setAlignment(Qt::AlignBottom | Qt::AlignRight);
-    info_layout->addWidget(lon_widget);
-
+    /* Set up button toolbar */
     auto_homing_button.setText("Track");
     auto_homing_button.setCheckable(true);
     auto_homing_button.setChecked(true);
@@ -125,21 +121,28 @@ MapScreen::zoom_out()
     map_widget->zoomOut();
 }
 
+QString
+MapScreen::latlon_to_string(qreal n)
+{
+    return QString::number(n, 'f', 4);
+}
+
 void
 MapScreen::position_changed(GeoDataCoordinates position)
 {
     qreal speed;
 
     speed = gpsd_provider_plugin->speed();
-    speed_widget->setText(
-        "Speed: " +
-        QString::number(gpsd_provider_plugin->speed() * MSEC_KPH_FACTOR, 'f', 1) +
-        " km/h"
-    );
 
-    direction_widget->setText("Heading: " + direction_from_heading(gpsd_provider_plugin->direction()));
-    lat_widget->setText("Lat: " + QString::number(position.latitude(GeoDataCoordinates::Degree), 'f', 4));
-    lon_widget->setText("Lon: " + QString::number(position.longitude(GeoDataCoordinates::Degree), 'f', 4));
+    speed_widget->setText(QString::number(gpsd_provider_plugin->speed() * MSEC_KPH_FACTOR, 'f', 1) + " km/h");
+
+    direction_widget->setText(direction_from_heading(gpsd_provider_plugin->direction()));
+
+    coords_widget->setText(
+        latlon_to_string(position.latitude(GeoDataCoordinates::Degree)) +
+        ", " +
+        latlon_to_string(position.longitude(GeoDataCoordinates::Degree))
+    );
 
     if (!auto_homing_button.isChecked()) {
         return;
