@@ -95,7 +95,7 @@ void
 DiagnosticScreen::shutdown()
 {
     QProcess process;
-    process.start("sudo /bin/systemctl shutdown");
+    process.start("sudo /bin/systemctl poweroff");
     process.waitForFinished(1000);
     process.terminate();
     process.kill();
