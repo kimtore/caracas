@@ -96,9 +96,7 @@ DiagnosticScreen::shutdown()
 {
     QProcess process;
     process.start("sudo /bin/systemctl poweroff");
-    process.waitForFinished(1000);
-    process.terminate();
-    process.kill();
+    process.waitForFinished(5000);
 }
 
 void
@@ -106,7 +104,5 @@ DiagnosticScreen::reboot()
 {
     QProcess process;
     process.start("sudo /bin/systemctl reboot");
-    process.waitForFinished(1000);
-    process.terminate();
-    process.kill();
+    process.waitForFinished(5000);
 }
