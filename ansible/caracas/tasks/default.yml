@@ -23,6 +23,7 @@
     - libxft-dev
     - libxinerama-dev
     - libzmq3-dev
+    - logrotate
     - mosh
     - mpc
     - mpd
