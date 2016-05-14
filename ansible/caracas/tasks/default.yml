@@ -131,3 +131,8 @@
 - name: deploy mpd configuration
   template: dest=/etc/mpd.conf
             src=etc/mpd.conf
+
+- name: allow caracas to reboot and shutdown
+  template: dest=/etc/sudoers.d/caracas
+            src=etc/sudoers.d/caracas
+            mode=0444
