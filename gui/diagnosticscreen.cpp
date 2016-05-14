@@ -56,6 +56,7 @@ DiagnosticScreen::format_uptime(char * buf, double up)
 DiagnosticScreen::DiagnosticScreen()
 {
     layout = new QVBoxLayout(this);
+    buttons = new QHBoxLayout();
 
     renderer = new QSvgRenderer(QString("/usr/local/lib/caracas/gui/caracas.svg"));
     logo = new QPixmap(QSize(500, 90));
@@ -73,7 +74,35 @@ DiagnosticScreen::DiagnosticScreen()
     layout->addWidget(uptime);
     read_and_set_uptime();
 
+    shutdown_button = new QPushButton("Shutdown");
+    reboot_button = new QPushButton("Reboot");
+    buttons->addWidget(shutdown_button);
+    buttons->addWidget(reboot_button);
+    layout->addLayout(buttons);
+
     uptime_timer = new QTimer(this);
     QObject::connect(uptime_timer, SIGNAL(timeout()), this, SLOT(read_and_set_uptime()));
     uptime_timer->start(1000);
+
+    QObject::connect(shutdown_button, &QPushButton::clicked,
+                     this, &DiagnosticScreen::shutdown);
+
+    QObject::connect(reboot_button, &QPushButton::clicked,
+                     this, &DiagnosticScreen::reboot);
+}
+
+void
+DiagnosticScreen::shutdown()
+{
+    QProcess process;
+    process.start("sudo /bin/systemctl poweroff");
+    process.waitForFinished(5000);
+}
+
+void
+DiagnosticScreen::reboot()
+{
+    QProcess process;
+    process.start("sudo /bin/systemctl reboot");
+    process.waitForFinished(5000);
 }

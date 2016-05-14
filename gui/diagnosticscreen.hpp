@@ -8,6 +8,8 @@
 #include <QSvgRenderer>
 #include <QPixmap>
 #include <QPainter>
+#include <QPushButton>
+#include <QProcess>
 
 
 #ifndef _GUI_DIAGNOSTICSCREEN_H_
@@ -23,6 +25,8 @@ public:
 
 public slots:
     void read_and_set_uptime();
+    void shutdown();
+    void reboot();
 
 private:
 
@@ -32,11 +36,16 @@ private:
     QTimer * uptime_timer;
 
     QVBoxLayout * layout;
+    QHBoxLayout * buttons;
+
     QLabel * title;
     QLabel * uptime;
     QSvgRenderer * renderer;
     QPixmap * logo;
     QPainter * painter;
+
+    QPushButton * shutdown_button;
+    QPushButton * reboot_button;
 };
 
 
