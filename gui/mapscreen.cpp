@@ -4,15 +4,7 @@ using namespace Marble;
 
 
 #define MSEC_KPH_FACTOR 3.6
-
-#define ZOOM_SPEED_DELOREAN 2634
-#define ZOOM_SPEED_HIGH     2773
-#define ZOOM_SPEED_MEDIUM   2911
-#define ZOOM_SPEED_LOW      3050
-
-#define THRESHOLD_SPEED_DELOREAN 100.0
-#define THRESHOLD_SPEED_HIGH     70.0
-#define THRESHOLD_SPEED_MEDIUM   40.0
+#define MID_SPEED_MEASUREMENTS 3
 
 
 MapScreen::MapScreen()
@@ -20,6 +12,7 @@ MapScreen::MapScreen()
     const PositionProviderPlugin * pp;
 
     setup_directions();
+    mid_speed = 0;
 
     layout = new QVBoxLayout(this);
     main_layout = new QHBoxLayout();
@@ -105,6 +98,9 @@ MapScreen::MapScreen()
     QObject::connect(&zoom_out_widget, &QPushButton::clicked,
                      this, &MapScreen::zoom_out);
 
+    QObject::connect(&auto_homing_button, &QPushButton::toggled,
+                     this, &MapScreen::track_toggled);
+
 }
 
 void
@@ -128,13 +124,68 @@ MapScreen::latlon_to_string(qreal n)
 }
 
 void
+MapScreen::register_speed(qreal speed)
+{
+    static qreal speeds[MID_SPEED_MEASUREMENTS] = {0};
+    qreal r = 0;
+
+    for (int i = 0; i < MID_SPEED_MEASUREMENTS - 1; i++) {
+        speeds[i] = speeds[i + 1];
+        r += speeds[i];
+    }
+
+    speeds[MID_SPEED_MEASUREMENTS - 1] = speed;
+    r += speed;
+
+    mid_speed = r / MID_SPEED_MEASUREMENTS;
+}
+
+void
+MapScreen::zoom_for_speed(qreal speed)
+{
+    int zoom = 1;  /* minimum zoom level is one offset from OSM */
+
+    if (speed >= 20.0) {
+        zoom += 2;
+    }
+
+    if (speed >= 80.0) {
+        zoom += 2;
+    }
+
+    map_widget->setZoom(map_widget->maximumZoom());
+
+    while (zoom-- != 0) {
+        map_widget->zoomOut();
+    }
+}
+
+void
+MapScreen::center_and_zoom()
+{
+    map_widget->centerOn(last_position);
+    zoom_for_speed(mid_speed);
+}
+
+void
+MapScreen::track_toggled(bool checked)
+{
+    if (!checked) {
+        return;
+    }
+
+    center_and_zoom();
+}
+
+void
 MapScreen::position_changed(GeoDataCoordinates position)
 {
     qreal speed;
 
-    speed = gpsd_provider_plugin->speed();
+    speed = gpsd_provider_plugin->speed() * MSEC_KPH_FACTOR;
+    register_speed(speed);
 
-    speed_widget->setText(QString::number(gpsd_provider_plugin->speed() * MSEC_KPH_FACTOR, 'f', 1) + " km/h");
+    speed_widget->setText(QString::number(speed, 'f', 1) + " km/h");
 
     direction_widget->setText(direction_from_heading(gpsd_provider_plugin->direction()));
 
@@ -144,21 +195,11 @@ MapScreen::position_changed(GeoDataCoordinates position)
         latlon_to_string(position.longitude(GeoDataCoordinates::Degree))
     );
 
-    if (!auto_homing_button.isChecked()) {
-        return;
-    }
+    last_position = position;
 
-    if (speed > THRESHOLD_SPEED_DELOREAN) {
-        map_widget->setZoom(ZOOM_SPEED_DELOREAN);
-    } else if (speed > THRESHOLD_SPEED_HIGH) {
-        map_widget->setZoom(ZOOM_SPEED_HIGH);
-    } else if (speed > THRESHOLD_SPEED_MEDIUM) {
-        map_widget->setZoom(ZOOM_SPEED_MEDIUM);
-    } else {
-        map_widget->setZoom(ZOOM_SPEED_LOW);
+    if (auto_homing_button.isChecked()) {
+        center_and_zoom();
     }
-
-    map_widget->centerOn(position);
 }
 
 void

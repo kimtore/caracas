@@ -26,10 +26,13 @@ public:
     QString direction_from_heading(qreal heading);
     QString latlon_to_string(qreal n);
 
+    qreal mid_speed;
+
 public slots:
     void position_changed(GeoDataCoordinates position);
     void zoom_in();
     void zoom_out();
+    void track_toggled(bool checked);
 
 private:
     QVBoxLayout * layout;
@@ -50,6 +53,10 @@ private:
     QStringList directions;
 
     PositionProviderPlugin * gpsd_provider_plugin;
+    GeoDataCoordinates last_position;
 
     void setup_directions();
+    void register_speed(qreal speed);
+    void zoom_for_speed(qreal speed);
+    void center_and_zoom();
 };
