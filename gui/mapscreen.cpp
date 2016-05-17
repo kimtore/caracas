@@ -54,6 +54,10 @@ MapScreen::MapScreen()
 
     map_widget->model()->positionTracking()->setPositionProviderPlugin(gpsd_provider_plugin);
 
+    /* Zoom to world */
+    map_widget->setZoom(map_widget->minimumZoom());
+    map_widget->zoomIn();
+
     /* Speed widget */
     speed_widget = new QLabel();
     speed_widget->setAlignment(Qt::AlignBottom | Qt::AlignLeft);
