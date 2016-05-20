@@ -271,10 +271,6 @@ static uint8_t get_pin_event(uint8_t pin)
 
     set_pin_state(pin, state);
 
-    if (state == old_state) {
-        return EVENT_NONE;
-    }
-
     return event_from_state(state);
 }
 
