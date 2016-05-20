@@ -1,62 +1,43 @@
-#include <QApplication>
-#include <QVBoxLayout>
-#include <QHBoxLayout>
-#include <QLabel>
-#include <QPushButton>
+#include <QStackedWidget>
 
-#include <marble/AbstractFloatItem.h>
-#include <marble/MarbleModel.h>
-#include <marble/PositionProviderPlugin.h>
-#include <marble/PluginManager.h>
-#include <marble/MarbleGlobal.h>
-#include <marble/MarbleWidget.h>
-#include <marble/MarbleWidgetInputHandler.h>
-#include <marble/PositionTracking.h>
+#include <marble/GeoDataPlacemark.h>
+#include <marble/SearchRunnerManager.h>
 
-using namespace Marble;
+#include "navigationscreen.hpp"
+#include "searchscreen.hpp"
+#include "listscreen.hpp"
 
 
-class MapScreen : public QWidget
+#ifndef _GUI_MAPSCREEN_H_
+#define _GUI_MAPSCREEN_H_
+
+
+class MapScreen : public QStackedWidget
 {
     Q_OBJECT
 
 public:
     MapScreen();
 
-    QString direction_from_heading(qreal heading);
-    QString latlon_to_string(qreal n);
+    void perform_search(QString term, qreal distance);
 
-    qreal mid_speed;
+    NavigationScreen * navigation_screen;
+    SearchScreen * search_screen;
+    ListScreen * results_screen;
+    SearchRunnerManager * search_manager;
+
+    QString last_search_term;
+    qreal last_search_distance;
 
 public slots:
-    void position_changed(GeoDataCoordinates position);
-    void zoom_in();
-    void zoom_out();
-    void track_toggled(bool checked);
 
-private:
-    QVBoxLayout * layout;
-    QHBoxLayout * main_layout;
-    QVBoxLayout * button_layout;
-    QHBoxLayout * info_layout;
-
-    MarbleWidget * map_widget;
-    QLabel * speed_widget;
-    QLabel * direction_widget;
-    QLabel * coords_widget;
-
-    QPushButton auto_homing_button;
-    QPushButton zoom_in_widget;
-    QPushButton zoom_out_widget;
-    QPushButton search_button_widget;
-
-    QStringList directions;
-
-    PositionProviderPlugin * gpsd_provider_plugin;
-    GeoDataCoordinates last_position;
-
-    void setup_directions();
-    void register_speed(qreal speed);
-    void zoom_for_speed(qreal speed);
-    void center_and_zoom();
+    void search_result_changed(const QVector<GeoDataPlacemark *> &result);
+    void perform_search_slot(QString term);
+    void start_navigation(QListWidgetItem * item);
+    void show_search();
+    void hide_search();
+    qreal km_to_rad(qreal km);
 };
+
+
+#endif /* _GUI_MAPSCREEN_H_ */

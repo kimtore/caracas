@@ -1,235 +1,138 @@
 #include "mapscreen.hpp"
 
-using namespace Marble;
 
-
-#define MSEC_KPH_FACTOR 3.6
-#define MID_SPEED_MEASUREMENTS 3
+#define MAX_DISTANCE 1000.0
+#define DISTANCE_INCREASE_FACTOR 2.0
 
 
 MapScreen::MapScreen()
 {
-    const PositionProviderPlugin * pp;
+    navigation_screen = new NavigationScreen();
+    search_screen = new SearchScreen();
+    results_screen = new ListScreen();
+    search_manager = new SearchRunnerManager(navigation_screen->map_widget->model());
 
-    setup_directions();
-    mid_speed = 0;
+    addWidget(navigation_screen);
+    addWidget(search_screen);
+    addWidget(results_screen);
 
-    layout = new QVBoxLayout(this);
-    main_layout = new QHBoxLayout();
-    info_layout = new QHBoxLayout();
-    info_layout->setAlignment(Qt::AlignBottom);
-    button_layout = new QVBoxLayout();
-    button_layout->setObjectName("map_buttons");
-    button_layout->setAlignment(Qt::AlignLeft | Qt::AlignTop);
+    QObject::connect(&(navigation_screen->search_button_widget), &QPushButton::clicked,
+                     this, &MapScreen::show_search);
 
-    map_widget = new MarbleWidget();
-    map_widget->setMapThemeId("earth/openstreetmap/openstreetmap.dgml");
-    map_widget->setProjection(Marble::Mercator);
+    QObject::connect(search_screen, &SearchScreen::search,
+                     this, &MapScreen::perform_search_slot);
 
-    /* Hide stuff */
-    foreach (AbstractFloatItem * item, map_widget->floatItems()) {
-        item->setVisible(false);
-    }
-    map_widget->setShowCrosshairs(false);
-    map_widget->setShowGrid(false);
-    map_widget->setShowOtherPlaces(false);
-    map_widget->setShowRelief(false);
+    QObject::connect(search_manager, static_cast<void (SearchRunnerManager::*)(const QVector<GeoDataPlacemark *> &)>(&SearchRunnerManager::searchResultChanged),
+                     this, &MapScreen::search_result_changed);
 
-    /* Don't animate anything */
-    map_widget->inputHandler()->setInertialEarthRotationEnabled(false);
-    map_widget->setAnimationsEnabled(false);
-
-    /* Plugin manager */
-    gpsd_provider_plugin = NULL;
-    foreach(pp, map_widget->model()->pluginManager()->positionProviderPlugins()) {
-        if (pp->nameId() == "Gpsd") {
-            gpsd_provider_plugin = pp->newInstance();
-        }
-    }
-
-    if (!gpsd_provider_plugin) {
-        qDebug() << "Unable to find GPSd among position provider plugins, aborting.";
-        abort();
-    }
-
-    map_widget->model()->positionTracking()->setPositionProviderPlugin(gpsd_provider_plugin);
-
-    /* Zoom to world */
-    map_widget->setZoom(map_widget->minimumZoom());
-    map_widget->zoomIn();
-
-    /* Speed widget */
-    speed_widget = new QLabel();
-    speed_widget->setAlignment(Qt::AlignBottom | Qt::AlignLeft);
-    info_layout->addWidget(speed_widget);
-
-    /* Direction widget */
-    direction_widget = new QLabel();
-    direction_widget->setAlignment(Qt::AlignBottom | Qt::AlignCenter);
-    info_layout->addWidget(direction_widget);
-
-    /* Coordinate widget */
-    coords_widget = new QLabel();
-    coords_widget->setAlignment(Qt::AlignBottom | Qt::AlignRight);
-    info_layout->addWidget(coords_widget);
-
-    /* Set up button toolbar */
-    auto_homing_button.setText("Track");
-    auto_homing_button.setCheckable(true);
-    auto_homing_button.setChecked(true);
-    button_layout->addWidget(&auto_homing_button);
-    zoom_in_widget.setText("+");
-    button_layout->addWidget(&zoom_in_widget);
-    zoom_out_widget.setText("-");
-    button_layout->addWidget(&zoom_out_widget);
-    search_button_widget.setText("Search");
-    button_layout->addWidget(&search_button_widget);
-
-    /* Set up main layout */
-    main_layout->addLayout(button_layout);
-    main_layout->addWidget(map_widget);
-    main_layout->setStretch(1, 100);
-    layout->addLayout(main_layout);
-    layout->addLayout(info_layout);
-    layout->setStretch(0, 100);
-
-    QObject::connect(gpsd_provider_plugin, &PositionProviderPlugin::positionChanged,
-                     this, &MapScreen::position_changed);
-
-    QObject::connect(&zoom_in_widget, &QPushButton::clicked,
-                     this, &MapScreen::zoom_in);
-
-    QObject::connect(&zoom_out_widget, &QPushButton::clicked,
-                     this, &MapScreen::zoom_out);
-
-    QObject::connect(&auto_homing_button, &QPushButton::toggled,
-                     this, &MapScreen::track_toggled);
-
+    QObject::connect(results_screen, &ListScreen::itemClicked,
+                     this, &MapScreen::start_navigation);
 }
 
 void
-MapScreen::zoom_in()
+MapScreen::perform_search(QString term, qreal distance)
 {
-    auto_homing_button.setChecked(false);
-    map_widget->zoomIn();
-}
+    GeoDataLatLonBox box;
+    GeoDataCoordinates location;
 
-void
-MapScreen::zoom_out()
-{
-    auto_homing_button.setChecked(false);
-    map_widget->zoomOut();
-}
+    setCurrentIndex(indexOf(results_screen));
 
-QString
-MapScreen::latlon_to_string(qreal n)
-{
-    return QString::number(n, 'f', 4);
-}
+    last_search_term = term;
+    last_search_distance = distance;
 
-void
-MapScreen::register_speed(qreal speed)
-{
-    static qreal speeds[MID_SPEED_MEASUREMENTS] = {0};
-    qreal r = 0;
-
-    for (int i = 0; i < MID_SPEED_MEASUREMENTS - 1; i++) {
-        speeds[i] = speeds[i + 1];
-        r += speeds[i];
-    }
-
-    speeds[MID_SPEED_MEASUREMENTS - 1] = speed;
-    r += speed;
-
-    mid_speed = r / MID_SPEED_MEASUREMENTS;
-}
-
-void
-MapScreen::zoom_for_speed(qreal speed)
-{
-    int zoom = 1;  /* minimum zoom level is one offset from OSM */
-
-    if (speed >= 20.0) {
-        zoom += 2;
-    }
-
-    if (speed >= 80.0) {
-        zoom += 2;
-    }
-
-    map_widget->setZoom(map_widget->maximumZoom());
-
-    while (zoom-- != 0) {
-        map_widget->zoomOut();
-    }
-}
-
-void
-MapScreen::center_and_zoom()
-{
-    map_widget->centerOn(last_position);
-    zoom_for_speed(mid_speed);
-}
-
-void
-MapScreen::track_toggled(bool checked)
-{
-    if (!checked) {
+    if (distance > MAX_DISTANCE) {
+        search_manager->findPlacemarks(term);
         return;
     }
 
-    center_and_zoom();
+    location = navigation_screen->map_widget->focusPoint();
+    box.setNorth(location.latitude() - km_to_rad(distance));
+    box.setSouth(location.latitude() + km_to_rad(distance));
+    box.setEast(location.longitude() - km_to_rad(distance));
+    box.setWest(location.longitude() + km_to_rad(distance));
+
+    qDebug() << "Box north:" << box.north(GeoDataCoordinates::Degree);
+    qDebug() << "Box south:" << box.south(GeoDataCoordinates::Degree);
+    qDebug() << "Box west:" << box.west(GeoDataCoordinates::Degree);
+    qDebug() << "Box east:" << box.east(GeoDataCoordinates::Degree);
+
+    search_manager->findPlacemarks(term, box);
 }
 
 void
-MapScreen::position_changed(GeoDataCoordinates position)
+MapScreen::perform_search_slot(QString term)
 {
-    qreal speed;
+    perform_search(term, 10.0);
+}
 
-    speed = gpsd_provider_plugin->speed() * MSEC_KPH_FACTOR;
-    register_speed(speed);
+void
+MapScreen::search_result_changed(const QVector<GeoDataPlacemark *> &result)
+{
+    QString name;
 
-    speed_widget->setText(QString::number(speed, 'f', 1) + " km/h");
+    results_screen->clear();
+    results_screen->coordinates.clear();
 
-    direction_widget->setText(direction_from_heading(gpsd_provider_plugin->direction()));
+    qDebug() << "Start search results";
 
-    coords_widget->setText(
-        latlon_to_string(position.latitude(GeoDataCoordinates::Degree)) +
-        ", " +
-        latlon_to_string(position.longitude(GeoDataCoordinates::Degree))
-    );
+    foreach (GeoDataPlacemark * m, result) {
+        //if (!mark->hasOsmData() || ((name = mark->osmData().tagValue("name")) == "")) {
+            name = m->coordinate().toString(Marble::GeoDataCoordinates::Decimal).trimmed();
+        //}
+        results_screen->addItem(name);
+        results_screen->coordinates.append(m->coordinate());
+        qDebug() << "Search result:" << name;
+    }
+    qDebug() << "End search results";
 
-    last_position = position;
-
-    if (auto_homing_button.isChecked()) {
-        center_and_zoom();
+    if (result.size() == 0) {
+        if (last_search_distance > MAX_DISTANCE) {
+            qDebug() << "Giving up because max distance" << MAX_DISTANCE << "has been exceeded.";
+            hide_search();
+            return;
+        }
+        qDebug() << "Retrying search with distance" << last_search_distance * DISTANCE_INCREASE_FACTOR;
+        perform_search(last_search_term, last_search_distance * DISTANCE_INCREASE_FACTOR);
     }
 }
 
 void
-MapScreen::setup_directions()
+MapScreen::start_navigation(QListWidgetItem * item)
 {
-    directions.push_back("North");
-    directions.push_back("North-northeast");
-    directions.push_back("Northeast");
-    directions.push_back("East-northeast");
-    directions.push_back("East");
-    directions.push_back("East-southeast");
-    directions.push_back("Southeast");
-    directions.push_back("South-southeast");
-    directions.push_back("South");
-    directions.push_back("South-southwest");
-    directions.push_back("Southwest");
-    directions.push_back("West-southwest");
-    directions.push_back("West");
-    directions.push_back("West-northwest");
-    directions.push_back("Northwest");
-    directions.push_back("North-northwest");
+    GeoDataCoordinates coordinates;
+    RoutingManager * rm;
+    RouteRequest * rq;
+
+    setCurrentIndex(indexOf(navigation_screen));
+
+    coordinates = results_screen->coordinates[results_screen->row(item)];
+
+    rm = navigation_screen->map_widget->model()->routingManager();
+    rq = rm->routeRequest();
+
+    rq->clear();
+    rq->setRoutingProfile(rm->defaultProfile(Marble::RoutingProfile::Motorcar));
+    rq->append(navigation_screen->last_position);
+    rq->append(coordinates);
+    rm->setShowGuidanceModeStartupWarning(false);
+    rm->setGuidanceModeEnabled(true);
+    rm->retrieveRoute();
 }
 
-QString
-MapScreen::direction_from_heading(qreal heading)
+void
+MapScreen::show_search()
 {
-    int index = (int)((heading/22.5)+.5) % 16;
-    return directions[index];
+    setCurrentIndex(indexOf(search_screen));
+}
+
+void
+MapScreen::hide_search()
+{
+    setCurrentIndex(indexOf(navigation_screen));
+}
+
+qreal
+MapScreen::km_to_rad(qreal km)
+{
+    return km / 6371.0;
 }
