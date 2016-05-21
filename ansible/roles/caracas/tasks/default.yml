@@ -136,3 +136,6 @@
   template: dest=/etc/sudoers.d/caracas
             src=etc/sudoers.d/caracas
             mode=0444
+
+- name: install ansible
+  pip: name=ansible
