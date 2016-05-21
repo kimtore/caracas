@@ -1,0 +1,5 @@
+---
+
+- hosts: caracas
+  roles:
+    - caracas

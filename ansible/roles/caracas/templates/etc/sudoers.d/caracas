@@ -1,0 +1,4 @@
+# Allow Caracas GUI to shut down and reboot the system
+
+caracas ALL= NOPASSWD: /bin/systemctl poweroff
+caracas ALL= NOPASSWD: /bin/systemctl reboot

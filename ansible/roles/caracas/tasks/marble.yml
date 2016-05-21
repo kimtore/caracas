@@ -18,7 +18,7 @@
 - name: checkout marble repository
   git: repo=git://anongit.kde.org/marble
        dest=/ssd/marble/src
-       version=Applications/15.12
+       version=Applications/16.04
        depth=1
 
 - name: create marble build directory
