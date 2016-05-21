@@ -13,5 +13,5 @@ Caracas is a DIY car stereo system for the Toyota Avensis 2007 running on Raspbe
 * SSD disk stores huge amounts of music
 * 4G Internet connection using car antenna
 * GPS module using car antenna
-* Custom MPD client using Qt (TODO)
-* World-wide road navigation using Marble and OpenStreetMap (TODO)
+* Custom MPD client using Qt
+* World-wide road navigation using Marble and OpenStreetMap

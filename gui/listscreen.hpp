@@ -1,6 +1,8 @@
 #include <QString>
 #include <QListWidget>
 
+#include <marble/GeoDataCoordinates.h>
+
 #include "mpdclient.hpp"
 #include "albumartwidget.hpp"
 
@@ -15,6 +17,7 @@ class ListScreen : public QListWidget
 
 public:
     ListScreen();
+    QList<Marble::GeoDataCoordinates> coordinates;
 
 signals:
     void selected(QString text);

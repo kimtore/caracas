@@ -13,11 +13,11 @@ MainScreen::MainScreen()
     map_icon = new QIcon(icon_path + "marble.png");
     diagnostic_icon = new QIcon(icon_path + "diagnostic.png");
 
-    this->setObjectName("main_menu");
-    this->setTabPosition(QTabWidget::East);
-    this->setIconSize(QSize(80, 80));
+    setObjectName("main_menu");
+    setTabPosition(QTabWidget::East);
+    setIconSize(QSize(80, 80));
 
-    this->addTab(music_screen, *music_icon, "");
-    this->addTab(map_screen, *map_icon, "");
-    this->addTab(diagnostic_screen, *diagnostic_icon, "");
+    addTab(music_screen, *music_icon, "");
+    addTab(map_screen, *map_icon, "");
+    addTab(diagnostic_screen, *diagnostic_icon, "");
 }
